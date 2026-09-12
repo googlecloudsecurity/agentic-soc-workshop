@@ -52,35 +52,66 @@ than from a fired alert.
 The Emerging Threats Center correlates GTI campaign intelligence against
 your own environment in two ways: **IOC matches**, where campaign
 indicators are searched across your telemetry, and **detection matches**,
-where curated rules mapped to that campaign have fired.
+where curated rules mapped to that campaign are surfaced along with whether
+you actually have them turned on.
 
 **Task 1.1** — In Google SecOps, go to **Detections → Emerging Threats**.
 
-**Task 1.2** — Find the campaign matching your incident.
+**Task 1.2** — Search for the threat cluster behind your incident:
 
-> 🚧 **TODO — fill in during build:** the exact campaign name as it appears
-> in the ETC feed for this tenant, and how to find it (search term, or its
-> position in the prioritised feed).
+```
+UNC6661
+```
 
-**Task 1.3** — Open the campaign detail view and read the writeup. Note:
+You will get several results, and they are not the same kind of thing.
 
-- The TTPs attributed to the campaign, and how they compare to what TIN
-  found in your case
-- Whether the campaign detail names infrastructure you already have —
-  the MEVSPACE ASN, the attacker IP, the phishing domain
+Most are **intelligence reports** — a document icon and an ID like
+`26-10004420`. These are the written analysis: what the adversary does, who
+they target, how the tradecraft works. Useful, but it is the same
+information you could read on a public blog.
 
-**Task 1.4** — Review the two match types.
+One result is a **campaign entry**, with a `CAMP.` identifier. That one is
+different, and it is the one you want.
 
-> 🚧 **TODO — fill in during build:** what IOC matches and detection matches
-> actually return in this tenant, and which of them tie back to your case.
+> ⚠️ Check the associated actor before you open anything. One of the
+> results is a campaign run by **UNC6671** — the same tradecraft, a sibling
+> cluster, but they go after SharePoint and OneDrive with PowerShell rather
+> than Salesforce. Close, and not your incident.
 
-> 💡 **Why this is a different starting point:** an alert tells you
-> something fired. A campaign view tells you what an adversary group is
-> doing across the industry, and then shows you which parts of it are
-> already present in your data. The first is reactive by construction. The
-> second lets you act on intelligence before anything fires.
+**Task 1.3** — Open the campaign entry and read the Google Threat
+Intelligence summary. As you read, compare it against what TIN found in
+your case:
 
----
+- The initial access method and how the MFA device was registered
+- Which cloud platforms the actor pivoted to
+- The associated actors, and how the extortion arm is tracked separately
+  from the intrusion cluster
+
+**Task 1.4** — Now look at the panels on the right hand side. This is where
+the campaign entry earns its place.
+
+- **IOCs** — what does this report for your tenant?
+- **Rules** — read the count. Then open the **Disabled Rules** section
+  below it.
+
+Those disabled rules are curated detections that Google ships, already
+mapped to this campaign. They exist in your tenant right now. They are not
+switched on.
+
+Look at the **Rule Set** column for each one, then answer two questions for
+yourself:
+
+1. Which of these rules covers the part of the attack chain TIN actually
+   caught in your case?
+2. Which one describes real tradecraft for this campaign that *this
+   particular intrusion* never used?
+
+> 💡 **Coverage is not collection, and it is not availability either.** The
+> logs were collected. The detections were written, vetted, and shipped with
+> the product. Nobody turned them on. That gap between what is available and
+> what is enabled is invisible from the alert queue — a rule that is off
+> never produces an alert to tell you it is off. The campaign view is where
+> it becomes visible.
 
 ## Part 2 — Review the Threat Hunt
 
@@ -128,7 +159,8 @@ a pile of search results.
 | Done | Task |
 |---|---|
 | ✅ | Found the campaign behind your incident in the Emerging Threats Center |
-| ✅ | Reviewed IOC matches and detection matches against your own telemetry |
+| ✅ | Told an intelligence report apart from a campaign entry, and UNC6661 from UNC6671 |
+| ✅ | Read the campaign's coverage panel and found curated rules shipped but disabled |
 | ✅ | Read the Threat Hunt agent's verdict and its underlying queries |
 | ✅ | Compared campaign-wide scope against your single-incident scope |
 
