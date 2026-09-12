@@ -1,0 +1,15 @@
+- [Start here](/)
+- **Section 1: SecOps Orientation**
+  - [1. Triage Agent](s1c1-triage-agent.md)
+  - [2. Gemini in SecOps](s1c2-gemini-secops.md)
+  - [3. Emerging Threats & Threat Hunt](s1c3-threat-hunt-agent.md)
+  - [4. Gemini in Playbooks](s1c4-gemini-playbooks.md)
+  - [5. Detection Engineering Agent](s1c5-detection-engineering.md)
+- **Section 2: Build Your Own Agents**
+  - [1. Your first security agent](s2c1-first-agent.md)
+  - [2. CTI agent with GTI](s2c2-cti-agent.md)
+  - [3. Your SOC agent team](s2c3-agent-team.md)
+- **Section 3: Capture the Flag**
+  - [Capture the Flag](s3-ctf.md)
+- **Reference**
+  - [Cheat sheet](ref-cheatsheet.md)
