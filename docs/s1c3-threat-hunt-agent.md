@@ -6,6 +6,11 @@
 | **Platform** | Google SecOps SIEM — Emerging Threats Center + Threat Hunt agent |
 | **Goal** | Find the campaign behind your incident in the Emerging Threats Center, then review the results of an autonomous threat hunt across the environment |
 
+> 🚧 **Under construction.** This challenge is still being built and is not
+> part of today's session. Feel free to read through it, but you can skip
+> straight to the next challenge whenever you like — nothing later in the
+> workshop depends on it.
+
 ---
 
 ## Where We Left Off
