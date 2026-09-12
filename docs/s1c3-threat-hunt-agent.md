@@ -6,11 +6,6 @@
 | **Platform** | Google SecOps SIEM — Emerging Threats Center + Threat Hunt agent |
 | **Goal** | Find the campaign behind your incident in the Emerging Threats Center, then review the results of an autonomous threat hunt across the environment |
 
-> 🚧 **Under construction.** This challenge is still being built and is not
-> part of today's session. Feel free to read through it, but you can skip
-> straight to the next challenge whenever you like — nothing later in the
-> workshop depends on it.
-
 ---
 
 ## Where We Left Off
@@ -115,6 +110,11 @@ yourself:
 
 ## Part 2 — Review the Threat Hunt
 
+> 🚧 **Under construction.** A threat hunt has not been run for this
+> environment yet, so this part is a read-through rather than something you
+> can work through. Part 1 above is ready to go. Nothing later in the
+> workshop depends on this section.
+
 **What you're doing:** reading the output of an autonomous hunt that was
 launched against this campaign before the workshop began.
 
@@ -161,8 +161,8 @@ a pile of search results.
 | ✅ | Found the campaign behind your incident in the Emerging Threats Center |
 | ✅ | Told an intelligence report apart from a campaign entry, and UNC6661 from UNC6671 |
 | ✅ | Read the campaign's coverage panel and found curated rules shipped but disabled |
-| ✅ | Read the Threat Hunt agent's verdict and its underlying queries |
-| ✅ | Compared campaign-wide scope against your single-incident scope |
+| 🚧 | Read the Threat Hunt agent's verdict and its underlying queries |
+| 🚧 | Compared campaign-wide scope against your single-incident scope |
 
 ---
 
