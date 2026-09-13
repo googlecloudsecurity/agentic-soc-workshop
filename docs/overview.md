@@ -13,8 +13,8 @@ successfully from Warsaw, Poland — a city it has never logged in from. Fifty
 three seconds later, that same account enrolls a new multi-factor
 authentication device. The device is an Android emulator.
 
-Nine minutes after that, seven confidential documents leave the company's
-Salesforce tenant in twenty-two seconds.
+Fifteen minutes after that, seven confidential documents leave the
+company's Salesforce tenant in twenty-two seconds.
 
 You are the Tier 1 analyst on shift. The alert is in your queue.
 
@@ -61,8 +61,8 @@ persistence beyond what the enrollment needed. They search for the words
 "confidential" and "trading strategy", pull the results with a script, and
 leave.
 
-The whole sequence, first failed login to last download, took thirty-eight
-minutes.
+The whole sequence, first failed login to last document out the door, took
+twenty-six minutes.
 
 ---
 
@@ -114,5 +114,5 @@ you opened earlier.
 
 ---
 
-> The attacker has had a forty minute head start. Click **next** when you
-> are ready to begin.
+> The attacker has had a long head start. Click **next** when you are ready
+> to begin.
