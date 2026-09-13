@@ -142,3 +142,11 @@ the case wall with TIN's full verdict, confidence, summary, and next steps.
 TIN answered *what happened to the account*. It did not answer *what left
 the building*. Next you will use Gemini in Google SecOps to follow the
 attacker into a log source TIN's search scope never covered.
+
+---
+
+## References
+
+Product documentation and background reading for this challenge:
+
+- [Triage Investigation Agent](https://docs.cloud.google.com/chronicle/docs/secops/triage-investigation-agent)
