@@ -4,7 +4,7 @@
 |---|---|
 | **Time** | 15 minutes |
 | **Platform** | Google SecOps SIEM — Emerging Threats Center + Threat Hunt agent |
-| **Goal** | Find the campaign behind your incident in the Emerging Threats Center, then review the results of an autonomous threat hunt across the environment |
+| **Goal** | Find the campaign behind your incident in the Emerging Threats Center and assess what detection coverage you actually have for it |
 
 ---
 
@@ -107,6 +107,8 @@ yourself:
 > what is enabled is invisible from the alert queue — a rule that is off
 > never produces an alert to tell you it is off. The campaign view is where
 > it becomes visible.
+
+---
 
 ## Part 2 — Review the Threat Hunt
 
