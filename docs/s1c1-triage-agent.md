@@ -4,7 +4,7 @@
 |---|---|
 | **Time** | 15 minutes |
 | **Platform** | Google SecOps SIEM + SOAR |
-| **Goal** | Review what the Triage Agent found automatically, approve its findings to the case wall, and note your Case ID |
+| **Goal** | Read the Triage Agent's investigation and the queries behind it, form your own view on the verdict, and post the findings to the case wall |
 
 ---
 
@@ -13,10 +13,10 @@
 **TIN (the Triage Investigation Agent)** is an agentic capability built into
 Google SecOps SIEM. When an alert fires, it automatically:
 
-- Searches all Google SecOps log sources, not just the alert events
+- Searches across the SIEM, not just the events in the alert
 - Queries Google Threat Intelligence live for IOC enrichment
 - Correlates findings into a structured investigation
-- Waits for analyst approval before writing to the SOAR case wall
+- Shows every query it ran, so you can audit how it reached its verdict
 
 In under two minutes it can pull in tens of events across multiple log
 sources, retrieve live GTI attribution on the attacker IP, and prepare a
@@ -36,12 +36,12 @@ prompted.
 **Task 1.2** — Find your case. It is named in the format:
 
 ```
-[CASE ID] - [VERDICT] - [CONFIDENCE]
+Case [CASE ID] - [PRIORITY] Priority
 ```
 
-For example: **1045 - True Positive - High Confidence**. The name was set
-automatically by the playbook using TIN's verdict and confidence, so the
-verdict in your case name is TIN's, not a given.
+For example: **Case 1053 - High Priority**. The name was set automatically
+the moment the alert arrived — you will find out what did that in
+Challenge 4.
 
 **Task 1.3** — Note the numeric ID at the start of the case name.
 
@@ -152,11 +152,17 @@ answer it, weigh what you have read:
 > records where it differs is doing the job. Your feedback is also how the
 > product learns what your environment actually looks like.
 
-**Task 3.2** — In the SOAR case, go to **Pending Actions**. You will see a
-manual task: **Post TIN Investigation to Case Wall?**
+**Task 3.2** — Close the investigation panel and return to the case. Find
+**Pending Actions** and click **Respond** on **Approve Triage Agent
+Investigation**.
 
-**Task 3.3** — Click **Approve**. A `TIN_INVESTIGATION:` comment appears on
-the case wall with TIN's verdict, confidence, summary, and next steps.
+**Task 3.3** — Select **Approve**, then click **Done**. A
+`TIN_INVESTIGATION:` comment appears on the case wall with TIN's verdict,
+confidence, summary, and next steps.
+
+> If the comment does not appear, click the **refresh** icon next to the
+> case header. The case view does not poll for changes on its own — worth
+> remembering for the rest of this section.
 
 > 📋 Approving posts TIN's work to the record so your agents can build on
 > it in Section 2. That is a separate decision from whether you agree with

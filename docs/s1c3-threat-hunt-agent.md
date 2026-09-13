@@ -170,8 +170,10 @@ a pile of search results.
 
 ## → Challenge 4
 
-You have the incident, the campaign, and the environment-wide picture.
-Next: the response side, and where Gemini fits inside a SOAR playbook.
+You have the incident, the campaign, and the environment-wide picture. Two
+assessments of this case now sit on the wall and they do not agree with
+each other. Next: a playbook that reads both and decides who should be
+holding this case.
 
 ---
 
