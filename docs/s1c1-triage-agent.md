@@ -18,10 +18,10 @@ Google SecOps SIEM. When an alert fires, it automatically:
 - Correlates findings into a structured investigation
 - Waits for analyst approval before writing to the SOAR case wall
 
-In under two minutes it can correlate 31 events across multiple log
+In under two minutes it can pull in tens of events across multiple log
 sources, retrieve live GTI attribution on the attacker IP, and prepare a
-complete investigation summary. A human analyst doing this by hand takes
-20 to 40 minutes.
+complete investigation summary with every query it ran shown in full. A
+human analyst doing this by hand takes 20 to 40 minutes.
 
 This is not a demo feature. It runs in production SecOps environments
 today.
@@ -36,11 +36,12 @@ prompted.
 **Task 1.2** — Find your case. It is named in the format:
 
 ```
-[CASE ID] - True Positive - High Confidence
+[CASE ID] - [VERDICT] - [CONFIDENCE]
 ```
 
-For example: **214 - True Positive - High Confidence**. The name was set
-automatically by the playbook using TIN's verdict and confidence.
+For example: **1045 - True Positive - High Confidence**. The name was set
+automatically by the playbook using TIN's verdict and confidence, so the
+verdict in your case name is TIN's, not a given.
 
 **Task 1.3** — Note the numeric ID at the start of the case name.
 
@@ -53,31 +54,54 @@ automatically by the playbook using TIN's verdict and confidence.
 
 ## Part 2 — Read the TIN Investigation
 
-> **Why TIN sees more than the Gemini case summary:** the case summary was
-> generated from the 6 alert events SOAR ingested. TIN ran full searches
-> across all log sources and found 31.
+> **Why TIN sees more than the case summary:** the Gemini case summary was
+> generated from the alert events SOAR ingested. TIN ran its own searches
+> across the SIEM and pulled in considerably more.
 >
 > | | Case Summary | TIN Investigation |
 > |---|---|---|
-> | Evidence base | 6 alert events | 31 events, all log sources |
-> | GTI enrichment | References a verdict | Ran a live GTI query |
-> | Geo baseline | Mentions Netherlands | Confirmed 30-day login history |
+> | Evidence base | The alert events | Its own SIEM searches, ~31 events |
+> | Threat intel | References a verdict | Ran a live GTI query |
+> | Scope | This alert | Checked whether other accounts were hit |
 
-**Task 2.1** — Read the **Gemini Summary** panel at the top of the case. It
-covers the attacker IP verdict, the credential stuffing pattern, three
-behaviour anomalies, and the MITRE techniques the alert surfaced.
+**Task 2.1** — Read the **Gemini Summary** panel at the top of the case.
+Three columns: what happened, why it matters, and what to do next. Note the
+verdict badge at the top of the panel.
 
 **Task 2.2** — Click **View Investigation →** to open TIN's step-by-step
-trail. Work through each step and notice how the picture was built:
+trail.
 
-- **GTI query** on `149.50.97.144` — malicious verdict, Mandiant campaign
-  association (UNC6661)
-- **30-day login history** — consistent Netherlands logins. Warsaw is new
-- **31 events from the attacker IP** — MFA activation, Okta logins, an SSO
-  burst across 8 applications
-- **Recent login events** — failure loop 10:42 to 10:51 UTC, success at
-  10:52:14, MFA activation at 10:53:07
-- **Scope check** — only s.hudson affected, no lateral movement
+The timeline is filterable by tool type — GTI lookups, SIEM searches,
+context fetches. Work through each step and read both the finding *and* the
+query that produced it. Every search TIN ran is shown in full, and you can
+re-run any of them.
+
+Things worth stopping on:
+
+- **The GTI lookup** on `149.50.97.144`. Read the verdict carefully, and
+  note that GTI records when a verdict has recently changed.
+- **The historical login search.** What baseline did TIN have to compare
+  against? The answer shapes how much weight the geographic anomaly can
+  carry.
+- **The prior alert for this identity.** TIN found one, closed by a human
+  with a root cause that is not what you would expect. Read how TIN handled
+  that.
+- **The IP search** — `principal.ip = "149.50.97.144"` across a six-day
+  window, returning ~31 events. This is the search that concluded the
+  activity was isolated to one account.
+- **The user agent search** for `Genymobile/Phone`. Look at what it
+  returned, then look at the query.
+
+> 💡 **Read the queries, not just the findings.** The user agent search is
+> the one to sit with. The emulator string is the centrepiece of this alert,
+> and yet that search came back empty — because it was scoped to
+> `metadata.event_type = "USER_LOGIN"`, and the MFA factor activation is not
+> a login event.
+>
+> Nothing is wrong with the query. It is well-formed and the assumption
+> behind it is reasonable. But scope determines findings, and the only way
+> to know what an automated search did *not* look at is to read it. This is
+> exactly why the trail is shown to you rather than just the conclusion.
 
 **Task 2.3** — Note the key facts. Your agents in Section 2 read these
 directly from the case wall, so TIN's investigation is their starting
@@ -85,45 +109,59 @@ point.
 
 ```
 Victim:          s.hudson@cymbal-investments.com (Saul Hudson)
-Attacker IP:     149.50.97.144 (Warsaw, Poland — MEVSPACE ASN 201814)
-GTI verdict:     Malicious — Mandiant campaign association (UNC6661)
-Enrolled device: Genymobile/Phone (Android emulator, isEmulator=true)
-MFA factor ID:   mfa9genymobile00001
+Attacker IP:     149.50.97.144 (Warsaw, Poland)
+Enrolled factor: Okta Passkey, Android emulator
+                 com.okta.android.auth/... Android/16 Genymobile/Phone
+Pattern:         failed logins → successful auth → immediate MFA enrollment
+Scope:           isolated to s.hudson, no other accounts targeted by this IP
 ```
 
-> ✅ TIN traced 31 events and ran a live GTI query automatically. But notice
-> what it did **not** find: the Salesforce data exfiltration. That is in a
-> different log source, and it is what you will uncover in Challenge 2.
+> ✅ TIN pulled ~31 events and ran a live GTI query automatically, in under
+> two minutes. But notice what is absent: the Salesforce data exfiltration.
+> Look again at the IP search that found those 31 events and ask yourself
+> what it would have matched. That is Challenge 2.
 
 ---
 
-## Part 3 — Approve Posting TIN's Investigation to the Case Wall
+## Part 3 — Decide, Then Post to the Case Wall
 
-> ⚠️ **This step has consequences.** If you click **No** or let the action
-> time out after 10 minutes, TIN's findings are never written to the case
-> wall. In Section 2 your agents will read the case wall and find nothing
-> from TIN, and the Incident Commander will have no triage context to cite.
+> ⚠️ **This step has consequences.** If you decline, or let the action time
+> out after 10 minutes, TIN's findings are never written to the case wall.
+> In Section 2 your agents will read the case wall and find nothing from
+> TIN, and the Incident Commander will have no triage context to cite.
 >
 > This is intentional. Every decision in the investigation chain has
 > downstream consequences.
 
-**Task 3.1** — In the SOAR case, go to **Pending Actions**. You will see a
+**Task 3.1** — In the investigation view, find the prompt: **Do you agree
+with the verdict?**
+
+This is the human-in-the-loop moment, and it is a real question. Before you
+answer it, weigh what you have read:
+
+- What verdict and confidence did TIN return?
+- Does the Gemini Summary panel characterise the incident the same way?
+- Which of the two had more evidence in front of it?
+- From the evidence *you* have read — the failed login sequence, the
+  successful authentication, the immediate enrollment of an MFA factor from
+  an Android emulator — what would you have concluded?
+
+> 💡 **Disagreeing is a valid answer.** The prompt is not there for
+> decoration. An analyst who rubber-stamps an automated verdict adds nothing
+> to the chain. An analyst who reads the evidence, forms their own view, and
+> records where it differs is doing the job. Your feedback is also how the
+> product learns what your environment actually looks like.
+
+**Task 3.2** — In the SOAR case, go to **Pending Actions**. You will see a
 manual task: **Post TIN Investigation to Case Wall?**
 
-**Task 3.2** — Review TIN's findings before deciding:
-
-- **Verdict:** True Positive — a confirmed incident, not a false positive
-- **Confidence:** High
-- **Summary:** the full attack narrative including credential stuffing, MFA
-  manipulation, and the SSO burst
-- **GTI verdict:** attacker IP confirmed malicious, UNC6661 association
-
 **Task 3.3** — Click **Approve**. A `TIN_INVESTIGATION:` comment appears on
-the case wall with TIN's full verdict, confidence, summary, and next steps.
+the case wall with TIN's verdict, confidence, summary, and next steps.
 
-> 💡 **The human-in-the-loop pattern:** in a real SOC an analyst reviews
-> automated findings before they become part of the official record. TIN did
-> the work. You validate it. Approve is an endorsement, not a rubber stamp.
+> 📋 Approving posts TIN's work to the record so your agents can build on
+> it in Section 2. That is a separate decision from whether you agree with
+> TIN's verdict — an investigation worth building on does not have to be an
+> investigation you agree with.
 
 ---
 
@@ -132,7 +170,8 @@ the case wall with TIN's full verdict, confidence, summary, and next steps.
 | Done | Task |
 |---|---|
 | ✅ | Found your case and noted your Case ID |
-| ✅ | Read TIN's investigation trail |
+| ✅ | Read TIN's investigation trail, including the queries it ran |
+| ✅ | Formed your own view and answered the verdict prompt |
 | ✅ | Approved posting `TIN_INVESTIGATION:` to the case wall |
 
 ---
