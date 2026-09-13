@@ -14,11 +14,23 @@ The case wall has `TIN_INVESTIGATION:` on it — the authentication chain,
 the MFA manipulation, the GTI verdict.
 
 What it does not have is any account of what data left the environment.
-TIN triages the alert. It searched for events linked to the attacker IP at
-the network layer, and the Salesforce activity was tied to s.hudson's
-authenticated session instead — so it fell outside that scope.
 
-This is not a gap in TIN. It is what interactive analysis is for.
+Look back at the search in TIN's trail that concluded the activity was
+isolated to one account:
+
+```
+principal.ip = "149.50.97.144"
+```
+
+A sound query for the question it was asking — did this IP touch anyone
+else? But it matches on one specific field, and different log sources
+populate different fields. A search built around `principal.ip` returns
+whatever log types put the address there, and silently returns nothing from
+the ones that do not.
+
+TIN did not miss the exfiltration so much as never search a shape of data
+that would contain it. That is not a flaw to work around — it is why
+interactive analysis exists, and why the trail shows you every query.
 
 ---
 
@@ -37,6 +49,11 @@ Show me Salesforce events where principal.ip is 149.50.97.144 from the past mont
 > you are following a known thread into a new log source. The explicit time
 > range matters — without it, Gemini's default 24-hour window may miss the
 > events entirely depending on when they were ingested.
+>
+> If Gemini comes back empty, drop the field name and just ask for
+> Salesforce events involving `149.50.97.144`. Naming a field constrains the
+> query Gemini builds, and this is exactly the situation where that
+> constraint can work against you.
 
 **What you should see:**
 
@@ -64,7 +81,9 @@ bulk exfiltration, not a user reading documents.
 Gemini's summary will not list the file names directly. They are in the
 parsed event fields, so you need to drill in.
 
-**Task 2.1** — Run this UDM search:
+**Task 2.1** — Run this UDM search. Note that it uses `ip`, not
+`principal.ip` — `ip` is an alias that matches the address wherever the
+parser put it:
 
 ```
 extracted.fields.key = "DocumentTitle"
@@ -131,6 +150,19 @@ Regulatory exposure: SEC Rule 17a-4 (trading records), SOX (financial records), 
 
 ---
 
+## The Teaching Moment
+
+TIN runs structured automated searches optimised for triage speed, and
+shows you every one of them. Gemini lets you ask a natural language
+question that crosses a log source boundary the automated search never
+covered.
+
+Neither replaces the other. What connects them is an analyst who read the
+queries closely enough to notice which shape of data had not been looked
+at — and the case wall, where both sets of findings end up.
+
+---
+
 ## Challenge 2 Complete ✅
 
 | Done | Task |
@@ -138,15 +170,6 @@ Regulatory exposure: SEC Rule 17a-4 (trading records), SOX (financial records), 
 | ✅ | Discovered the Salesforce exfiltration with Gemini |
 | ✅ | Drilled into parsed events to confirm all 7 document names |
 | ✅ | Posted `GEMINI_FINDINGS:` to the case wall |
-
----
-
-## The Teaching Moment
-
-TIN runs structured automated searches optimised for triage speed. Gemini
-lets you ask a natural language question that crosses a log source boundary
-the automated search never covered. Neither replaces the other, and the
-case wall is what connects them.
 
 ---
 
