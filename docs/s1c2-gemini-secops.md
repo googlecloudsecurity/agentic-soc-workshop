@@ -154,3 +154,12 @@ case wall is what connects them.
 
 You know what happened here. Next: is this campaign active anywhere else in
 the environment?
+
+---
+
+## References
+
+Product documentation and background reading for this challenge:
+
+- [Gemini in Google SecOps overview](https://docs.cloud.google.com/chronicle/docs/secops/gemini-secops)
+- [Generate UDM search queries with Gemini](https://docs.cloud.google.com/chronicle/docs/investigation/generate-udm-search-queries-gemini)
