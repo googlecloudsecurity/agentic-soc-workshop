@@ -19,6 +19,7 @@ docs/                  docsify lab guide — cloned into every sandbox at track 
 instruqt/              NOT served by docsify — version control for Instruqt config
   s0-assignment.md     Section 0 instructions pane
   s1-assignment.md     Section 1 instructions pane, identical for all five challenges
+  s2-assignment.md     Section 2 instructions pane
   scripts/
     setup-docker.sh    track setup, docker host
     s1-setup-docker.sh challenge setup, identical for all five Section 1 challenges
@@ -71,18 +72,36 @@ above, so keep this table in sync by hand.
 
 ## Instruqt tab layout
 
-Section 0 has one tab. All five Section 1 challenges use the same three, in
-the same order — the assignment pane's `tab-0` / `tab-1` / `tab-2` buttons
-are positional, so the order must not vary between challenges.
+Tab references in the assignment panes are **positional**, so the order
+must not vary between challenges within a section.
+
+Section 0 has one tab. All five Section 1 challenges use the same three:
 
 | # | Tab | Type | Host | Port |
 |---|---|---|---|---|
 | tab-0 | Lab Guide | Service | docker | 8081 |
 | tab-1 | SecOps Login | Service | docker | 8080 |
-| tab-2 | Google SecOps | External website | — | — |
+| tab-2 | Google SecOps | External website | | |
 
-Section 2 will need more tabs. Append them as tab-3 onward so 0–2 stay
-stable and the Section 1 pane keeps working unchanged.
+Section 2 uses a **different set**, not an extension of Section 1's. The
+SecOps tabs are dropped:
+
+| # | Tab | Type | Host | Port |
+|---|---|---|---|---|
+| tab-0 | Lab Guide | Service | docker | 8081 |
+| tab-1 | Code-Server | Service | adk | 8080 |
+| tab-2 | ADK Web | Service | adk | 8000 |
+| tab-3 | Grader | Service | adk | 8888 |
+
+Nothing listens on adk:8000 until the participant runs `adk web` in Step 3,
+so that tab shows a connection error until then. Both the lab guide and the
+assignment pane say so. Do not attach a readiness check to it.
+
+Section 2 deliberately drops the SecOps tabs. Participants do not log into
+Google SecOps at all between the end of Section 1 and the start of
+Section 3, where the CTF brings it back. That makes the SOAR case wall
+unverifiable from the UI during Section 2, which is an argument for the
+mock SOAR MCP over the real one.
 
 ---
 
@@ -139,6 +158,49 @@ have to match.
 
 ---
 
+## The SOAR case wall in Section 2
+
+Section 2 agents read and write a case wall through a **mock SOAR MCP
+server** on port 8004, SSE transport, matching the existing Okta (8001),
+CrowdStrike (8002) and Wiz (8003) mocks. Decided, not yet built.
+
+Why mock rather than the real SOAR MCP:
+
+- Participants have no SecOps tab in Section 2, so a real case wall is
+  unverifiable from the UI anyway
+- Thousands of concurrent agents against one tenant API key is a
+  rate-limit incident
+- A fixed wall lets the grader check whether an agent cited the right
+  evidence
+- No per-participant case ID plumbing, so someone who skipped Section 1
+  still has a working wall
+
+Design:
+
+- Tools: `get_case_full_details(case_id)`,
+  `post_case_comment(case_id, comment)`, optional `list_case_comments`
+- Accepts any `case_id` and returns the same seeded case
+- Returns clean comment objects, **not** the real API's
+  `activities[].activityDataJson.commentForClient` nesting. The mock is a
+  simplified SOAR, not a replica
+- Upsert by comment prefix so reruns are idempotent and L2 never reads
+  three versions of the same findings
+- Seeded verbatim from a real Section 1 run: `TIN_INVESTIGATION:`,
+  `GEMINI_FINDINGS:`, `EVIDENCE ASSESSMENT`, and the escalation comment.
+  The assessment's four open questions are the Section 2 agenda
+- Mark the case visibly as a workshop copy so nobody mistakes it for their
+  own
+
+Keep the seed a generated artifact rather than hand-written text. Pull it
+from a golden case with Get Case Details after any playbook change.
+
+**CTF constraint.** Never put a flag answer somewhere only one path can
+reach, and never let mock text drift from the real SIEM data. The
+`EVIDENCE ASSESSMENT` open questions are generated prose and must never be
+a flag answer.
+
+---
+
 ## Writing style
 
 Pages follow a fixed shape:
@@ -179,9 +241,11 @@ will find.
   Hunts run 60 to 90 minutes, so it can never be run live inside the
   challenge.
 - `s1c5`, `s2c2`, `s2c3` and `s3-ctf` are stubs.
-- Section 2 needs a decision on the SOAR case wall: mock MCP server on port
-  8004 versus the real SOAR MCP. Affects continuity from Section 1, grading
-  determinism, and whether participants can skip Section 1.
+- The mock SOAR MCP server on port 8004 is decided but not built. See the
+  section above.
+- Add `"mcp<2"` to the `uv pip install` line in the adk host's track setup.
+  Four mocks now import `mcp.server.fastmcp`, which MCP Python SDK v2.0.0
+  removed.
 - The Section 2 grader runs agents live, which is slow. Static analysis of
   `agent.py` would be faster. `s2c1` Step 6 describes live grading and would
   need updating.

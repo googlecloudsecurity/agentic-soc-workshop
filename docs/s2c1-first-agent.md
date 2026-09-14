@@ -29,15 +29,21 @@ workshop.
 
 ## Your workspace
 
-Three new tabs for Section 2:
+Section 2 swaps the tab set. Google SecOps steps back for the whole
+section, and returns in Section 3 for the CTF. Three new tabs take its
+place:
 
 | Tab | What it is |
 |---|---|
-| **IDE** | code-server, a browser VS Code. Your agents live in `/root/agents` |
+| **Code-Server** | A browser VS Code. Your agents live in `/root/agents` |
 | **ADK Web** | The ADK developer UI. Chat with your agent and read its trace |
-| **Grader** | Scores your agent and unlocks the next challenge |
+| **Grader** | Scores your agent |
 
-All terminal commands run in the IDE's built-in terminal.
+All terminal commands run in the Code-Server tab's built-in terminal.
+
+> **ADK Web will not load yet.** Nothing is listening on that port until you
+> start the server yourself in Step 3. A connection error on that tab before
+> then is expected.
 
 ---
 
@@ -83,7 +89,7 @@ This creates a `mitre_agent/` folder with three files:
 | `__init__.py` | Makes the folder a Python package so ADK can discover the agent |
 | `.env` | Points ADK at Vertex AI and your GCP project |
 
-Open `mitre_agent/agent.py` in the IDE. The CLI generated a bare
+Open `mitre_agent/agent.py` in Code-Server. The CLI generated a bare
 `root_agent` with a placeholder instruction and **no tools**. Your agent
 has four fields:
 

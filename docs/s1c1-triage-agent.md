@@ -28,7 +28,7 @@ today.
 
 ---
 
-## Part 1: open the case and note your case ID
+## Part 1: open the case
 
 **Task 1.1** — Open the **Google SecOps** tab and go to Cases. Log in if
 prompted.
@@ -43,12 +43,7 @@ For example: **Case 1053 - High Priority**. Something set that name
 automatically the moment the alert arrived. You will find out what in
 Challenge 4.
 
-**Task 1.3** — Note the numeric ID at the start of the case name.
-
-> **Write this number down.** You will need it in Section 2 to tell your
-> agents which SOAR case to read and write to.
-
-**Task 1.4** — Click the case to open it.
+**Task 1.3** — Click the case to open it.
 
 ---
 
@@ -103,9 +98,8 @@ Things worth stopping on:
 > to know what an automated search did not look at is to read it. This is
 > why the trail is shown to you rather than just the conclusion.
 
-**Task 2.3** — Note the key facts. Your agents in Section 2 read these
-directly from the case wall, so TIN's investigation is their starting
-point.
+**Task 2.3** — Note the key facts. The case wall your Section 2 agents read
+starts from TIN's investigation, so this is their opening context.
 
 ```
 Victim:          s.hudson@cymbal-investments.com (Saul Hudson)
@@ -174,7 +168,7 @@ confidence, summary, and next steps.
 
 You have:
 
-- Found your case and noted your Case ID
+- Found your case and read its name
 - Read TIN's investigation trail, including the queries it ran
 - Formed your own view and answered the verdict prompt
 - Approved posting `TIN_INVESTIGATION:` to the case wall
