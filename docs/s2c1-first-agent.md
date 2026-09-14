@@ -1,4 +1,4 @@
-# Section 2 · Challenge 1: Build Your First Agent
+# Section 2 · Challenge 1: Build Your First Security AI Agent
 
 | | |
 |---|---|

@@ -59,7 +59,7 @@ gives a participant a blank content pane with no error anywhere.
 | S1 C3 Emerging Threats & Threat Hunt | `/#/s1c3-threat-hunt-agent` | `docs/s1c3-threat-hunt-agent.md` |
 | S1 C4 Gemini in Playbooks | `/#/s1c4-gemini-playbooks` | `docs/s1c4-gemini-playbooks.md` |
 | S1 C5 Detection Engineering Agent | `/#/s1c5-detection-engineering` | `docs/s1c5-detection-engineering.md` |
-| S2 C1 Build Your First Agent | `/#/s2c1-first-agent` | `docs/s2c1-first-agent.md` |
+| S2 C1 Build Your First Security AI Agent | `/#/s2c1-first-agent` | `docs/s2c1-first-agent.md` |
 | S2 C2 CTI Agent with GTI | `/#/s2c2-cti-agent` | `docs/s2c2-cti-agent.md` |
 | S2 C3 Build Your SOC Agent Team | `/#/s2c3-agent-team` | `docs/s2c3-agent-team.md` |
 | S3 Capture the Flag | `/#/s3-ctf` | `docs/s3-ctf.md` |
@@ -67,6 +67,10 @@ gives a participant a blank content pane with no error anywhere.
 Track setup validates that every page linked from `_sidebar.md` exists and
 prints `[DOCS] MISSING: <page>` if not. It **cannot** see the tab paths
 above, so keep this table in sync by hand.
+
+The page H1, the `_sidebar.md` label, and the Instruqt challenge title
+should all match. Participants see the Instruqt title above the assignment
+pane and the H1 on the Lab Guide tab at the same time.
 
 ---
 
