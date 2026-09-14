@@ -1,6 +1,6 @@
 # Operation Shiny Hunter
 
-## Agentic SOC workshop
+## Agentic SOC Workshop
 
 ---
 
@@ -92,7 +92,7 @@ agent can reach, and the instruction you write determines how well it
 reasons about what it finds. That causal chain is the actual skill this
 workshop teaches.
 
-### Section 3: capture the flag
+### Section 3: Capture the Flag
 
 A set of challenges across the environment. You can work them by hand, or
 point the agents you just built at them and let them do the searching.

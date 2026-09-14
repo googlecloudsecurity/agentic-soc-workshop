@@ -1,4 +1,4 @@
-# Section 1 · Challenge 4: Gemini in playbooks
+# Section 1 · Challenge 4: Gemini in Playbooks
 
 | | |
 |---|---|

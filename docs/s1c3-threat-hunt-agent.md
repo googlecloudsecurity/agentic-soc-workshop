@@ -1,4 +1,4 @@
-# Section 1 · Challenge 3: emerging threats and the threat hunt agent
+# Section 1 · Challenge 3: Emerging Threats and the Threat Hunt Agent
 
 | | |
 |---|---|
@@ -110,7 +110,7 @@ yourself:
 
 ---
 
-## Part 2: review the threat hunt
+## Part 2: review the Threat Hunt
 
 > **Under construction.** Nobody has run a threat hunt for this environment
 > yet, so this part is a read-through rather than something you can work

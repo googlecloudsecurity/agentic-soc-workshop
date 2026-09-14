@@ -1,4 +1,4 @@
-# Section 1 · Challenge 1: triage agent
+# Section 1 · Challenge 1: Triage Agent
 
 | | |
 |---|---|
@@ -8,7 +8,7 @@
 
 ---
 
-## What the triage agent is
+## What the Triage Agent is
 
 **TIN (the Triage Investigation Agent)** is an agentic capability built into
 Google SecOps SIEM. When an alert fires, it automatically:
