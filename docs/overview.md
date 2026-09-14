@@ -1,6 +1,6 @@
 # Operation Shiny Hunter
 
-## Agentic SOC Workshop
+## Agentic SOC workshop
 
 ---
 
@@ -9,8 +9,8 @@
 A detection rule fires at Cymbal Investments.
 
 An account belonging to a senior portfolio manager authenticates
-successfully from Warsaw, Poland — a city it has never logged in from. Fifty
-three seconds later, that same account enrolls a new multi-factor
+successfully from Warsaw, Poland, a city it has never logged in from.
+Fifty three seconds later, that same account enrolls a new multi-factor
 authentication device. The device is an Android emulator.
 
 Fifteen minutes after that, seven confidential documents leave the
@@ -26,10 +26,9 @@ A mid-sized investment management firm headquartered in New York, roughly
 $12B under management across institutional and high-net-worth clients.
 
 That profile matters more than it looks. Everything in the document
-repository is a regulated record: trading strategies under SEC Rule 17a-4,
-financial statements under SOX, and M&A material that is textbook material
-non-public information. A data theft incident here is not only a security
-incident — it is a disclosure event with a clock on it.
+repository is a regulated record. Trading strategies fall under SEC Rule
+17a-4, financial statements under SOX, and the M&A material is textbook
+MNPI. A data theft incident here is a disclosure event with a clock on it.
 
 The security stack is unremarkable and modern. Okta for identity,
 CrowdStrike on the endpoints, Wiz for cloud posture, Salesforce as the
@@ -38,20 +37,19 @@ logs together.
 
 ---
 
-## The Adversary
+## The adversary
 
 The tradecraft in front of you matches a ShinyHunters-branded cluster
 tracked as **UNC6661**. Their pattern is consistent enough to recognise
-from the first three events:
+from the first three events.
 
-**They call you.** Not an email with a link — a phone call, from someone who
+**They call you.** Not an email with a link. A phone call, from someone who
 sounds like IT, who already knows your manager's name and your ticket
 number.
 
-**They relay in real time.** The credentials typed into their page are
-forwarded to the real login page while the victim waits, along with the MFA
-code read aloud over the phone. The session they walk away with is
-genuine.
+**They relay in real time.** Their page forwards the typed credentials to
+the real login page while the victim waits, along with the MFA code read
+aloud over the phone. The session they walk away with is genuine.
 
 **They enroll their own device.** Before doing anything noisy, they add a
 factor they control, so losing the stolen session costs them nothing.
@@ -66,11 +64,11 @@ twenty-six minutes.
 
 ---
 
-## The Workshop
+## The workshop
 
 Three sections, each answering a different question.
 
-### Section 1 — What the product already does
+### Section 1: what the product already does
 
 Google SecOps ships with agentic capability that runs on every alert with
 no configuration from you. The Triage Investigation Agent works the case
@@ -81,20 +79,20 @@ decision needs a human.
 You will work this incident using those capabilities, and you will find
 something the automated triage did not.
 
-### Section 2 — What you can build on top of it
+### Section 2: what you can build on top of it
 
 In-product agents are bounded by the product. Your identity provider, your
 EDR, your cloud posture tool and your threat intelligence all sit outside
 the SIEM, and something has to reach them.
 
 Using the Google Agent Development Kit, you will build agents that do
-exactly that — writing them in code-server and driving them through ADK
+exactly that, writing them in code-server and driving them through ADK
 Web. You will find quickly that the tools you enable determine what an
 agent can reach, and the instruction you write determines how well it
 reasons about what it finds. That causal chain is the actual skill this
 workshop teaches.
 
-### Section 3 — Capture the Flag
+### Section 3: capture the flag
 
 A set of challenges across the environment. You can work them by hand, or
 point the agents you just built at them and let them do the searching.
@@ -102,7 +100,7 @@ Both are legitimate. One is faster.
 
 ---
 
-## Before You Begin
+## Before you begin
 
 Your Google SecOps account and one-click login link are on the **SecOps
 Login** tab. The username and password also stay in the instructions panel
