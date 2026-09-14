@@ -188,9 +188,9 @@ Product documentation and background reading for this challenge:
 
 - [Emerging Threats Center overview](https://docs.cloud.google.com/chronicle/docs/detection/emerging-threats)
 - [Emerging Threats Center detailed view](https://docs.cloud.google.com/chronicle/docs/detection/emerging-threats-detailed-view)
-- [Introducing the Emerging Threats Center in Google Security Operations](https://cloud.google.com/blog/products/identity-security/introducing-the-emerging-threats-center-in-google-security-operations) — Google Cloud blog
-- [Introducing the Emerging Threat Center](https://security.googlecloudcommunity.com/news-announcements-9/introducing-the-emerging-threats-center-in-google-security-operations-6281) — Google Cloud Security Community
-- [Emerging Threat Center video walkthrough](https://security.googlecloudcommunity.com/videos-74/introducing-the-emerging-threat-center-active-threat-intel-for-google-secops-6280) — Google Cloud Security Community
-- [Emerging Threats Center overview](https://www.youtube.com/watch?v=3fdjAZFTeAI) — YouTube
+- [Introducing the Emerging Threats Center in Google Security Operations](https://cloud.google.com/blog/products/identity-security/introducing-the-emerging-threats-center-in-google-security-operations), Google Cloud blog
+- [Introducing the Emerging Threat Center](https://security.googlecloudcommunity.com/news-announcements-9/introducing-the-emerging-threats-center-in-google-security-operations-6281), Google Cloud Security Community
+- [Emerging Threat Center video walkthrough](https://security.googlecloudcommunity.com/videos-74/introducing-the-emerging-threat-center-active-threat-intel-for-google-secops-6280), Google Cloud Security Community
+- [Emerging Threats Center overview](https://www.youtube.com/watch?v=3fdjAZFTeAI), YouTube
 - [Threat Hunt agent documentation](https://docs.cloud.google.com/chronicle/docs/detection/threat-hunt-agent)
-- [Announcing Public Preview of the Threat Hunt agent](https://security.googlecloudcommunity.com/community-blog-42/announcing-public-preview-of-the-google-security-operations-threat-hunt-agent-8099) — Google Cloud Security Community
+- [Announcing Public Preview of the Threat Hunt agent](https://security.googlecloudcommunity.com/community-blog-42/announcing-public-preview-of-the-google-security-operations-threat-hunt-agent-8099), Google Cloud Security Community

@@ -13,8 +13,11 @@
 Your MITRE agent has one tool, and that tool reaches the public internet.
 
 That is not where your open questions live. Google Threat Intelligence,
-your identity provider, your EDR, your cloud posture tool: none of them has
-a built-in ADK tool, and none of them is searchable from a browser.
+your identity provider, your EDR and your cloud posture tool all have their
+own consoles you could log into and click around. None of them has a
+built-in ADK tool, and a search engine cannot reach inside any of them.
+Each one is an authenticated system with its own API, and an agent needs a
+programmatic connection to it.
 
 This challenge connects the first of them. You will build a CTI agent on
 GTI, the same intelligence Mandiant analysts work from, and you will learn
@@ -90,7 +93,7 @@ reference is at
 
 ---
 
-## Step 1: Scaffold your agent
+## Step 1: scaffold your agent
 
 Use the ADK CLI to scaffold `cti_agent`, exactly as you did in
 Challenge 1:
@@ -202,7 +205,7 @@ blindly.
 
 ---
 
-## Step 2: Write the instruction
+## Step 2: write the instruction
 
 Write both the `description` and `instruction` fields.
 
@@ -237,7 +240,7 @@ Save with `Ctrl+S`.
 
 ---
 
-## Step 3: Launch and test
+## Step 3: launch and test
 
 ```bash
 cd /root/agents
@@ -285,7 +288,7 @@ agent invents a malware family.
 
 ---
 
-## Step 4: Read the trace, then iterate
+## Step 4: read the trace, then iterate
 
 After each query, open the trace view. For the first time you will see a
 multi-step agent loop:
@@ -321,7 +324,7 @@ adk web --host 0.0.0.0 --port 8000
 
 ---
 
-## Step 5: Grade your agent
+## Step 5: grade your agent
 
 Open the **Grader** tab and click **Grade Challenge 2**.
 

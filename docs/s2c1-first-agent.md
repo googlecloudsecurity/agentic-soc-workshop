@@ -47,7 +47,7 @@ All terminal commands run in the Code-Server tab's built-in terminal.
 
 ---
 
-## Step 1: Scaffold the agent
+## Step 1: scaffold the agent
 
 ADK ships with a CLI that scaffolds a new agent for you. Run this from the
 `agents` workspace:
@@ -106,7 +106,7 @@ has four fields:
 
 ---
 
-## Step 2: Write the instruction
+## Step 2: write the instruction
 
 Replace the placeholder instruction with a real one using these five
 elements. Also update the `description` to something specific, like
@@ -141,7 +141,7 @@ Save with `Ctrl+S`.
 
 ---
 
-## Step 3: Launch and test
+## Step 3: launch and test
 
 ```bash
 cd /root/agents
@@ -174,7 +174,7 @@ this workshop is really teaching.
 
 ---
 
-## Step 4: Read the trace
+## Step 4: read the trace
 
 Click any event in the left panel. You will see the full request sent to
 the model, including your instruction, and the response that came back.
@@ -192,7 +192,7 @@ It still gave you an answer. That is worth sitting with.
 
 ---
 
-## Step 5: Add a tool
+## Step 5: add a tool
 
 Stop the server. In `mitre_agent/agent.py`, add the import at the top and
 the `tools` argument at the bottom of the `Agent(...)` call. Leave your
@@ -234,7 +234,7 @@ noted in Step 3, then open the trace. This time there is a tool call to
 
 ---
 
-## Step 6: Grade your agent
+## Step 6: grade your agent
 
 Open the **Grader** tab and click **Grade Challenge 1**. The grader runs
 your agent against a set of test prompts and scores it across five

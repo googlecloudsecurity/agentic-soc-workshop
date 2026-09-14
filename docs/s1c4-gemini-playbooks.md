@@ -284,4 +284,4 @@ Product documentation and background reading for this challenge:
 
 - [Vertex AI integration for Google SecOps SOAR](https://docs.cloud.google.com/chronicle/docs/soar/marketplace-integrations/vertex-ai)
 - [Working with case playbooks](https://docs.cloud.google.com/chronicle/docs/soar/respond/working-with-playbooks/case-playbooks)
-- [Google SecOps gets a Vertex AI boost](https://security.googlecloudcommunity.com/news-announcements-9/google-secops-gets-a-vertex-ai-boost-5291#M144) — Google Cloud Security Community
+- [Google SecOps gets a Vertex AI boost](https://security.googlecloudcommunity.com/news-announcements-9/google-secops-gets-a-vertex-ai-boost-5291#M144), Google Cloud Security Community
