@@ -188,7 +188,9 @@ It still gave you an answer. That is worth sitting with.
 > **Fluency is not evidence.** A model with no tools produces confident,
 > well-structured, plausible text about events it has never seen. The only
 > way to know whether an answer is grounded is to look at whether a tool
-> ran. You will meet this again in Challenge 2, in a nastier form.
+> ran. Checking the trace rather than the prose is a habit worth building
+> now, because every agent you write from here has tools that can fail
+> quietly.
 
 ---
 

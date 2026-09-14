@@ -200,8 +200,8 @@ blindly.
 > imports `mcp.server.fastmcp`, a module the MCP Python SDK removed in
 > v2.0.0, and the package declares its `mcp` dependency with no upper
 > bound. Without the pin, uv resolves to 2.x and the server dies at import.
-> Read the failure-mode section at the end of this page, because you will
-> meet this bug again.
+> Pinning a transitive dependency is not usually your problem. When an MCP
+> server is a third-party package, sometimes it is.
 
 ---
 
@@ -261,9 +261,14 @@ Start with the tool inventory:
 What tools do you have available?
 ```
 
-You should get back the eight tools from `GTI_TOOLS`. If you get a vague
-answer with no tool names, your toolset failed to load. Skip to the
-failure-mode section at the end of this page.
+You should get back the eight tools from `GTI_TOOLS`.
+
+> **Ask this first, every time you wire up a new toolset.** If the MCP
+> server fails to start, ADK logs a warning and carries on. The agent boots,
+> answers questions, and sounds completely confident, with zero tools and
+> nothing but training data behind it. A vague answer with no tool names
+> here means the toolset did not load. Check the ADK console output in your
+> terminal for a `Failed to create MCP session` warning.
 
 Then work the Cymbal Investments indicators:
 
@@ -331,43 +336,6 @@ Open the **Grader** tab and click **Grade Challenge 2**.
 As in Challenge 1, the score is feedback rather than a gate. Read the
 per-dimension notes, tighten the part of your instruction they point at,
 restart the agent, and grade again.
-
----
-
-## When an agent looks healthy but has no tools
-
-This is the single most important debugging lesson in the workshop, and it
-is worth deliberately triggering once.
-
-If the MCP server fails to start, ADK catches the error, logs it at
-`WARNING`, and keeps going. The agent boots. It answers questions. It
-sounds confident. It has zero tools and is answering entirely from training
-data.
-
-The tell in the ADK console:
-
-```
-WARNING - llm_agent.py:213 - Failed to get tools from toolset McpToolset:
-Failed to create MCP session: Connection closed
-```
-
-The tell in the UI is subtler. Plausible answers, and no tool spans in the
-trace.
-
-The most common cause is the missing `mcp<2` pin. `gti_mcp` imports
-`mcp.server.fastmcp`, which MCP Python SDK v2.0.0 deleted, and `gti-mcp`
-declares `mcp` with no upper bound. When the SDK maintainers announced v2
-they noted that the overwhelming majority of the ten thousand plus PyPI
-packages depending on `mcp` had no upper bound and would all resolve to v2
-the day it shipped. This is one of them.
-
-You met a mild version of this in Challenge 1. An agent with no tools still
-produced a confident answer about 2026 campaigns it had never seen. Here
-the same failure is harder to spot, because the agent is supposed to have
-tools and the answer is supposed to be about threat intelligence.
-
-The lesson generalises past this one package. **A fluent answer is not
-evidence that your tools are working.** Check the trace, not the prose.
 
 ---
 
