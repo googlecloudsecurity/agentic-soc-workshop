@@ -119,23 +119,55 @@ Contents: Read-only on this repository.
 
 ---
 
+## Models
+
+Every agent in Section 2 runs on **`gemini-3.5-flash`** through Vertex AI in
+the sandbox's ephemeral GCP project. Standardise on that string everywhere:
+lab guides, reference implementations, and the `GEMINI_MODEL` export in the
+adk host's track setup.
+
+Instruqt allows only a fixed list of models through a connected cloud
+account. Anything not on that list fails at the first inference call, not at
+startup. Check it before offering participants an alternative:
+https://docs.instruqt.com/ai-capabilities/connect-ai-models
+
+OpenRouter is **not** used in this workshop. Vertex through the ephemeral
+project is the only inference path.
+
+Grader judge models are a separate decision from agent models and do not
+have to match.
+
+---
+
 ## Writing style
 
-Section 1 pages follow a fixed shape:
+Pages follow a fixed shape:
 
-1. Summary table — Time, Platform, Goal
-2. "Where We Left Off" — what is already on the SOAR case wall
+1. Summary table: Time, Platform, Goal
+2. "Where we left off", what is already on the SOAR case wall
 3. What the capability is and why it matters, before any clicking
-4. Numbered Parts containing numbered Tasks
-5. Completion table
+4. Numbered Parts containing numbered Tasks (Section 1) or numbered Steps
+   (Section 2)
+5. Completion list, then a Checkpoint list for build challenges
 6. One-line narrative handoff to the next challenge
-7. References — product documentation
+7. References, product documentation
 
-The `> 💡` callouts explaining *why* a query is worded a particular way are
-the most valuable lines on any page. The `> ⚠️` callouts flag decisions with
-downstream consequences.
+Prose follows the `unslop` rules. The ones that bite most often:
 
-Avoid asserting values that the product recalculates — campaign rule counts,
+- **No em dashes.** Use a period or a comma, or restructure the sentence.
+- **Sentence case headings**, with proper nouns still capitalised. "Part 2:
+  review the Threat Hunt", not "Part 2: Review The Threat Hunt".
+- **No decorative emojis.** Callouts use a bold lead-in that ends in a
+  period, then the detail: `> **Read the queries, not just the findings.**`
+- **Active voice.** Name the actor rather than writing "the logs were
+  collected".
+- **Cut filler and hedging.** "It is important to note that" goes entirely.
+
+The callouts explaining *why* a query is worded a particular way are the
+most valuable lines on any page. Callouts flagging decisions with downstream
+consequences are the second most valuable.
+
+Avoid asserting values that the product recalculates: campaign rule counts,
 IOC match state, verdicts. Tell participants what to read, not what they
 will find.
 
@@ -144,7 +176,17 @@ will find.
 ## Known open items
 
 - `s1c3` Part 2 needs a pre-run Threat Hunt before it can be completed.
-  Hunts run 60–90 minutes, so it can never be run live inside the challenge.
-- `s1c4`, `s1c5`, all of Section 2, and `s3-ctf` are stubs.
+  Hunts run 60 to 90 minutes, so it can never be run live inside the
+  challenge.
+- `s1c5`, `s2c2`, `s2c3` and `s3-ctf` are stubs.
+- Section 2 needs a decision on the SOAR case wall: mock MCP server on port
+  8004 versus the real SOAR MCP. Affects continuity from Section 1, grading
+  determinism, and whether participants can skip Section 1.
+- The Section 2 grader runs agents live, which is slow. Static analysis of
+  `agent.py` would be faster. `s2c1` Step 6 describes live grading and would
+  need updating.
 - `ref-cheatsheet.md` needs a scope decision: if it lists scenario IOCs it
   becomes a CTF answer key served to every participant.
+- CTF flags fall into tiers by which path can reach them: SIEM-answerable by
+  both hand and agent, platform-answerable by agents only, GTI by both. Tag
+  every candidate flag with its tier before building the CTF.
