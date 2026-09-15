@@ -782,6 +782,7 @@ is scanning, not reading.
 from google.adk.agents.llm_agent import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+from google.genai import types
 
 root_agent = Agent(
     name="identity_investigator",
@@ -889,6 +890,7 @@ Then return a short summary to the Incident Commander.
 from google.adk.agents.llm_agent import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+from google.genai import types
 
 root_agent = Agent(
     name="cloud_investigator",
@@ -1063,6 +1065,7 @@ Follow this report standard exactly.
 
 ```python
 from google.adk.agents.llm_agent import Agent
+from google.genai import types
 from cti_agent.agent import root_agent as cti_agent
 from identity_investigator.agent import root_agent as identity_investigator
 from cloud_investigator.agent import root_agent as cloud_investigator
