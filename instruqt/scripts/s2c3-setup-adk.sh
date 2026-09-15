@@ -1,99 +1,107 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
-# Section 2 Challenge 3 setup, adk host.
+# HOST: adk
+# SCRIPT: Section 2 Challenge 3 setup
 #
-# Starts the five mock MCP servers the agent team connects to and stages
-# the skills directory participants edit. Idempotent: safe to rerun, and
-# safe if the track-level setup already started some of the servers.
+# Starts the three new mock MCP servers the agent team connects to and
+# stages the incident report skill. Idempotent: safe to rerun.
+#
+# Conventions match the existing Okta and CrowdStrike mocks:
+#   - servers live in /root/mcp-servers, NOT /root/agents
+#     (/root/agents is the ADK Web workspace; anything in there gets
+#      scanned as an agent)
+#   - /root/mcp-servers/.adkignore belts-and-braces that
+#   - run under the ADK venv interpreter, not system python3
+#   - skills live in /root/skills/<name>/SKILL.md, outside the workspace
 #
 # Port map:
-#   8001  Okta
-#   8002  CrowdStrike
-#   8003  Wiz
-#   8004  Salesforce
-#   8005  SecOps SOAR
+#   8001  Okta          (track setup)
+#   8002  CrowdStrike   (track setup)
+#   8003  Wiz           (this script)
+#   8004  Salesforce    (this script)
+#   8005  SecOps SOAR   (this script)
 #
-set -Eeuo pipefail
+set -eo pipefail
 
-AGENTS_DIR="/root/agents"
-MCP_DIR="${AGENTS_DIR}/mcp"
-SKILLS_DIR="${AGENTS_DIR}/skills"
+MCP_DIR="/root/mcp-servers"
+SKILLS_DIR="/root/skills"
+VENV_PY="/root/adk-env/bin/python3"
 REPO_RAW="https://raw.githubusercontent.com/googlecloudsecurity/agentic-soc-workshop/main"
 
 log() { printf '[s2c3] %s\n' "$*"; }
-fail() { printf '[s2c3] ERROR: %s\n' "$*" >&2; exit 1; }
 
-mkdir -p "${MCP_DIR}" "${SKILLS_DIR}" /var/log
+mkdir -p "${MCP_DIR}" "${SKILLS_DIR}/incident-report-writer" /var/log
 
-# --- dependencies -----------------------------------------------------------
-# mcp<2 is load-bearing. The mocks import mcp.server.fastmcp, which the MCP
-# Python SDK removed in v2.0.0, and nothing pins it for us.
-log "ensuring FastMCP is available"
-if ! python3 -c 'import mcp.server.fastmcp' 2>/dev/null; then
-  uv pip install --system "mcp<2" >/dev/null 2>&1 \
-    || pip3 install --break-system-packages "mcp<2" >/dev/null 2>&1 \
-    || fail "could not install mcp<2"
+# ADK Web scans for agent packages. Keep it out of the mock directory.
+touch "${MCP_DIR}/.adkignore"
+
+[ -x "${VENV_PY}" ] || { log "ERROR: ${VENV_PY} not found"; exit 1; }
+
+# --- FastMCP availability ---------------------------------------------------
+# The mocks import mcp.server.fastmcp and fall back to fastmcp, so either
+# package satisfies them. Check before starting anything.
+if ! "${VENV_PY}" -c 'import mcp.server.fastmcp' 2>/dev/null \
+   && ! "${VENV_PY}" -c 'import fastmcp' 2>/dev/null; then
+  log "no FastMCP in adk-env, installing"
+  /root/.local/bin/uv pip install --python "${VENV_PY}" "fastmcp==3.4.2" --quiet 2>&1 | tail -2 || true
 fi
-python3 -c 'import mcp.server.fastmcp' 2>/dev/null \
-  || fail "mcp.server.fastmcp still not importable"
+"${VENV_PY}" -c 'import mcp.server.fastmcp' 2>/dev/null && log "using mcp.server.fastmcp"
+"${VENV_PY}" -c 'import fastmcp' 2>/dev/null && log "using fastmcp"
 
-# --- fetch mock servers and skills -----------------------------------------
+# --- fetch servers, seeds and skill -----------------------------------------
+# Each mock is a server plus a JSON seed, so a scenario change is a data
+# diff rather than a code diff. Repo is public: no token needed.
 fetch() {
   local src="$1" dest="$2"
-  if [[ -s "${dest}" ]]; then
-    log "already present: $(basename "${dest}")"
-    return 0
-  fi
-  curl -fsSL --retry 3 --retry-delay 2 --max-time 30 -o "${dest}" "${src}" \
-    || fail "could not fetch $(basename "${dest}")"
+  curl -fsSL --retry 3 --retry-delay 2 --max-time 30 -o "${dest}" "${src}" || {
+    log "ERROR: could not fetch $(basename "${dest}")"
+    return 1
+  }
   log "fetched $(basename "${dest}")"
 }
 
-for m in wiz_mock salesforce_mock soar_mock; do
-  fetch "${REPO_RAW}/instruqt/scripts/mcp/${m}.py" "${MCP_DIR}/${m}.py"
+for m in wiz salesforce soar; do
+  fetch "${REPO_RAW}/instruqt/scripts/mcp/${m}_mock.py"  "${MCP_DIR}/${m}_mock.py"  || exit 1
+  fetch "${REPO_RAW}/instruqt/scripts/mcp/${m}_seed.json" "${MCP_DIR}/${m}_seed.json" || exit 1
 done
 
-fetch "${REPO_RAW}/agents/skills/incident-report.md" "${SKILLS_DIR}/incident-report.md"
+fetch "${REPO_RAW}/skills/incident-report-writer/SKILL.md" \
+      "${SKILLS_DIR}/incident-report-writer/SKILL.md" || exit 1
 
 # --- start servers ----------------------------------------------------------
-# systemd is not PID 1 on this host, so nohup rather than unit files.
-start_mock() {
-  local name="$1" script="$2" port="$3"
+serving() {
+  curl -s --max-time 2 "http://localhost:$1/sse" 2>/dev/null | head -1 | grep -q 'event:'
+}
 
-  if curl -s --max-time 2 "http://localhost:${port}/sse" | head -1 | grep -q 'event:'; then
+start_mock() {
+  local name="$1" port="$2" script="${MCP_DIR}/$1_mock.py"
+  if serving "${port}"; then
     log "${name} already serving on ${port}"
     return 0
   fi
-
-  if [[ ! -s "${script}" ]]; then
-    log "WARNING: ${name} script missing at ${script}, skipping"
-    return 0
-  fi
-
   log "starting ${name} on ${port}"
-  nohup python3 "${script}" >>"/var/log/mcp-${name}.log" 2>&1 &
+  nohup "${VENV_PY}" "${script}" >>"/var/log/mcp-${name}.log" 2>&1 &
 }
 
-start_mock wiz        "${MCP_DIR}/wiz_mock.py"        8003
-start_mock salesforce "${MCP_DIR}/salesforce_mock.py" 8004
-start_mock soar       "${MCP_DIR}/soar_mock.py"       8005
+start_mock wiz        8003
+start_mock salesforce 8004
+start_mock soar       8005
 
 # --- readiness --------------------------------------------------------------
 log "waiting for MCP servers"
 for port in 8001 8002 8003 8004 8005; do
   ready=0
   for _ in $(seq 1 30); do
-    if curl -s --max-time 2 "http://localhost:${port}/sse" | head -1 | grep -q 'event:'; then
-      ready=1
-      break
-    fi
+    if serving "${port}"; then ready=1; break; fi
     sleep 1
   done
-  if [[ "${ready}" -eq 1 ]]; then
+  if [ "${ready}" -eq 1 ]; then
     log "port ${port}: ready"
   else
-    log "WARNING: port ${port} not serving. Check /var/log/mcp-*.log"
+    log "WARNING: port ${port} not serving"
+    tail -10 /var/log/mcp-*.log 2>/dev/null | sed 's/^/    /' || true
   fi
 done
 
 log "setup complete"
+exit 0

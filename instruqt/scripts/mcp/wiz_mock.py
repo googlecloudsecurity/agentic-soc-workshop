@@ -10,19 +10,35 @@ exposure. That combination is the point. An identity that never touched
 cloud during the incident can still represent a blast radius worth fixing
 before the next one.
 
+Scenario data lives in wiz_seed.json next to this file.
+
 Run:  python3 wiz_mock.py          (SSE on 0.0.0.0:8003)
+
+Env:
+  WIZ_MOCK_PORT   listen port, default 8003
+  WIZ_MOCK_SEED   path to the seed file, default ./wiz_seed.json
 """
 
+import json
 import os
+from pathlib import Path
 
-from mcp.server.fastmcp import FastMCP
+try:
+    from mcp.server.fastmcp import FastMCP
+except ImportError:
+    from fastmcp import FastMCP
 
 PORT = int(os.environ.get("WIZ_MOCK_PORT", "8003"))
+SEED_PATH = Path(os.environ.get("WIZ_MOCK_SEED", Path(__file__).parent / "wiz_seed.json"))
+
+_seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
+_IDENTITY = _seed["identity"]
+_PERMS = _seed["effective_permissions"]
+_ISSUES = _seed["issues"]
+_PATH = _seed["attack_path"]
+_AUDIT = _seed["audit_logs"]
 
 mcp = FastMCP("wiz-cloud-security", host="0.0.0.0", port=PORT)
-
-VICTIM = "s.hudson@cymbal-investments.com"
-ATTACKER_IP = "149.50.97.144"
 
 
 @mcp.tool()
@@ -33,24 +49,9 @@ def get_cloud_identity(email: str) -> dict:
     Args:
         email: The corporate email address of the identity.
     """
-    return {
-        "email": email,
-        "federation": {
-            "provider": "Okta",
-            "workforce_pool": "cymbal-workforce",
-            "provider_id": "okta-saml",
-            "binding": "Workforce Identity Federation to Google Cloud",
-        },
-        "principal": f"principal://iam.googleapis.com/locations/global/workforcePools/cymbal-workforce/subject/{email}",
-        "groups": ["investment-operations", "reporting-readers"],
-        "last_cloud_activity": "2026-02-19T16:22:04Z",
-        "cloud_activity_during_incident": None,
-        "note": (
-            "No Google Cloud API activity recorded for this identity on "
-            "2026-04-13. The federated path exists but was not exercised "
-            "during the incident window."
-        ),
-    }
+    if email.lower() != _IDENTITY["email"].lower():
+        return {"email": email, "found": False, "note": "Identity not in the cloud inventory."}
+    return dict(_IDENTITY)
 
 
 @mcp.tool()
@@ -65,38 +66,11 @@ def get_effective_permissions(email: str) -> dict:
     Args:
         email: The corporate email address of the identity.
     """
-    return {
-        "email": email,
-        "bindings": [
-            {
-                "role": "roles/storage.objectViewer",
-                "resource": "folders/cymbal-investment-ops",
-                "granted_via": "group:investment-operations",
-                "inherited_by_projects": [
-                    "cymbal-invops-prod",
-                    "cymbal-invops-analytics",
-                    "cymbal-invops-archive",
-                ],
-                "note": "Folder-level grant. Applies to every bucket in three projects.",
-            },
-            {
-                "role": "roles/bigquery.dataViewer",
-                "resource": "projects/cymbal-invops-analytics",
-                "granted_via": "group:reporting-readers",
-                "datasets_in_scope": ["client_holdings", "trade_history", "fund_performance"],
-            },
-        ],
-        "reachable_resources": {
-            "storage_buckets": 14,
-            "bigquery_datasets": 3,
-            "objects_estimated": 412000,
-        },
-        "assessment": (
-            "This identity has read access to client holdings and trade history "
-            "in BigQuery and to every Cloud Storage bucket under the Investment "
-            "Operations folder. None of it was accessed during the incident."
-        ),
-    }
+    if email.lower() != _IDENTITY["email"].lower():
+        return {"email": email, "found": False, "bindings": []}
+    result = {"email": _IDENTITY["email"]}
+    result.update(_PERMS)
+    return result
 
 
 @mcp.tool()
@@ -107,46 +81,7 @@ def list_identity_issues(email: str = "") -> dict:
     Args:
         email: Optional. Filter to one identity.
     """
-    issues = [
-        {
-            "id": "WIZ-4471",
-            "severity": "HIGH",
-            "title": "Federated identity has folder-level storage read across production data",
-            "subject": VICTIM,
-            "detail": (
-                "roles/storage.objectViewer granted at folders/cymbal-investment-ops "
-                "via group:investment-operations. Scope exceeds the buckets this "
-                "role is used against."
-            ),
-            "first_seen": "2025-08-14T00:00:00Z",
-            "status": "OPEN",
-        },
-        {
-            "id": "WIZ-4488",
-            "severity": "MEDIUM",
-            "title": "Service account key unused for over 180 days",
-            "subject": "invops-report-runner@cymbal-invops-prod.iam.gserviceaccount.com",
-            "detail": (
-                "Key created 2025-06-02, last used 2025-09-30. The service account "
-                "is impersonable by group:investment-operations."
-            ),
-            "first_seen": "2026-03-30T00:00:00Z",
-            "status": "OPEN",
-        },
-        {
-            "id": "WIZ-4502",
-            "severity": "MEDIUM",
-            "title": "Workforce pool provider has no session duration limit",
-            "subject": "workforcePools/cymbal-workforce/providers/okta-saml",
-            "detail": (
-                "Sessions established through this provider inherit the default "
-                "duration. A compromised identity provider session remains usable "
-                "in Google Cloud for longer than necessary."
-            ),
-            "first_seen": "2026-01-11T00:00:00Z",
-            "status": "OPEN",
-        },
-    ]
+    issues = _ISSUES
     if email:
         issues = [i for i in issues if email.lower() in i["subject"].lower()]
     return {"count": len(issues), "issues": issues}
@@ -163,39 +98,11 @@ def get_attack_path(email: str) -> dict:
     Args:
         email: The corporate email address of the compromised identity.
     """
-    return {
-        "subject": email,
-        "path_found": True,
-        "exercised_during_incident": False,
-        "steps": [
-            {
-                "step": 1,
-                "description": "Okta session assumed via Workforce Identity Federation",
-                "resource": "workforcePools/cymbal-workforce",
-            },
-            {
-                "step": 2,
-                "description": "Group membership grants folder-level storage read",
-                "resource": "folders/cymbal-investment-ops",
-            },
-            {
-                "step": 3,
-                "description": "Impersonate service account reachable from that group",
-                "resource": "invops-report-runner@cymbal-invops-prod.iam.gserviceaccount.com",
-            },
-            {
-                "step": 4,
-                "description": "Service account holds BigQuery read on client holdings",
-                "resource": "projects/cymbal-invops-analytics/datasets/client_holdings",
-            },
-        ],
-        "assessment": (
-            "A four-step path exists from the compromised identity to client "
-            "holdings data in BigQuery. Cloud audit logs show no activity from "
-            "this identity on 2026-04-13, so the path was available but not "
-            "taken. It remains open."
-        ),
-    }
+    if email.lower() != _IDENTITY["email"].lower():
+        return {"subject": email, "path_found": False, "steps": []}
+    result = {"subject": _IDENTITY["email"]}
+    result.update(_PATH)
+    return result
 
 
 @mcp.tool()
@@ -209,12 +116,9 @@ def search_cloud_audit_logs(source_ip: str = "", principal: str = "") -> dict:
     return {
         "source_ip": source_ip,
         "principal": principal,
-        "count": 0,
-        "entries": [],
-        "note": (
-            f"No Google Cloud audit log entries match. The attacker IP "
-            f"{ATTACKER_IP} does not appear in cloud audit logs at any point."
-        ),
+        "count": len(_AUDIT["entries"]),
+        "entries": _AUDIT["entries"],
+        "note": _AUDIT["note"],
     }
 
 

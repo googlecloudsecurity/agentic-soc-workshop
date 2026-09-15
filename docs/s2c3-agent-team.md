@@ -120,6 +120,9 @@ ls /var/log/mcp-*.log
 cat /var/log/mcp-soar.log
 ```
 
+The servers themselves live in `/root/mcp-servers`, deliberately outside
+`/root/agents` so ADK Web does not try to load them as agents.
+
 ---
 
 ## Step 2: bring the CTI Analyst onto the team
@@ -296,9 +299,11 @@ team says so rather than when an engineer edits an agent.
 
 So it lives in a file, and the agent reads it.
 
-Look at `/root/agents/skills/incident-report.md`. It is a markdown document
-grounded on the CISA incident response playbooks, defining eight required
-sections and the rules for writing them.
+Look at `/root/skills/incident-report-writer/SKILL.md`. It is a markdown
+document grounded on the CISA incident response playbooks, defining eight
+required sections and the rules for writing them. Skills live in
+`/root/skills`, outside `/root/agents`, so ADK Web never mistakes one for
+an agent.
 
 Replace the contents of `ir_analyst/agent.py`:
 
@@ -309,7 +314,7 @@ from google.adk.agents.llm_agent import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
 
-SKILL = (Path(__file__).parent.parent / "skills" / "incident-report.md").read_text()
+SKILL = Path("/root/skills/incident-report-writer/SKILL.md").read_text()
 
 root_agent = Agent(
     name="ir_analyst",
@@ -567,7 +572,7 @@ You have:
 - [ ] All four `description` fields are specific and differentiating
 - [ ] `identity_investigator` returns tools from Okta, CrowdStrike and SOAR
 - [ ] `cloud_investigator` returns tools from Wiz, Salesforce and SOAR
-- [ ] `ir_analyst/agent.py` reads `skills/incident-report.md`
+- [ ] `ir_analyst/agent.py` reads `/root/skills/incident-report-writer/SKILL.md`
 - [ ] `incident_commander/agent.py` has all four agents in `sub_agents=[]`
 - [ ] The full prompt produces visible delegation events in the trace
 - [ ] All four agent comments are on the case wall
