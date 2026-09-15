@@ -14,12 +14,12 @@
 #   - run under the ADK venv interpreter, not system python3
 #   - skills live in /root/skills/<name>/SKILL.md, outside the workspace
 #
-# Port map:
-#   8001  Okta          (track setup)
-#   8002  CrowdStrike   (track setup)
-#   8003  Wiz           (this script)
-#   8004  Salesforce    (this script)
-#   8005  SecOps SOAR   (this script)
+# Port map, all five started by this script:
+#   8001  Okta
+#   8002  CrowdStrike
+#   8003  Wiz
+#   8004  Salesforce
+#   8005  SecOps SOAR
 #
 set -eo pipefail
 
@@ -60,7 +60,7 @@ fetch() {
   log "fetched $(basename "${dest}")"
 }
 
-for m in wiz salesforce soar; do
+for m in okta crowdstrike wiz salesforce soar; do
   fetch "${REPO_RAW}/instruqt/scripts/mcp/${m}_mock.py"  "${MCP_DIR}/${m}_mock.py"  || exit 1
   fetch "${REPO_RAW}/instruqt/scripts/mcp/${m}_seed.json" "${MCP_DIR}/${m}_seed.json" || exit 1
 done
@@ -92,16 +92,16 @@ start_mock() {
   nohup "${VENV_PY}" "${script}" >>"/var/log/mcp-${name}.log" 2>&1 &
 }
 
-start_mock wiz        8003
-start_mock salesforce 8004
-start_mock soar       8005
+start_mock okta        8001
+start_mock crowdstrike 8002
+start_mock wiz         8003
+start_mock salesforce  8004
+start_mock soar        8005
 
 # --- readiness --------------------------------------------------------------
-# Only the three ports this script owns. Okta (8001) and CrowdStrike (8002)
-# are started elsewhere; waiting on them here just stalls challenge setup.
 log "waiting for MCP servers"
 FAILED=0
-for entry in "wiz:8003" "salesforce:8004" "soar:8005"; do
+for entry in "okta:8001" "crowdstrike:8002" "wiz:8003" "salesforce:8004" "soar:8005"; do
   name="${entry%%:*}"; port="${entry##*:}"
   ready=0
   for _ in $(seq 1 15); do
@@ -114,16 +114,6 @@ for entry in "wiz:8003" "salesforce:8004" "soar:8005"; do
     log "${name} (${port}): NOT SERVING"
     tail -15 "/var/log/mcp-${name}.log" 2>/dev/null | sed 's/^/    /' || true
     FAILED=1
-  fi
-done
-
-# Report on the two this script does not own, without blocking on them.
-for entry in "okta:8001" "crowdstrike:8002"; do
-  name="${entry%%:*}"; port="${entry##*:}"
-  if serving "${port}"; then
-    log "${name} (${port}): ready"
-  else
-    log "${name} (${port}): not serving, started outside this script"
   fi
 done
 
