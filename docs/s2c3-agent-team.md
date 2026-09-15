@@ -170,6 +170,7 @@ Replace the contents of `identity_investigator/agent.py`:
 from google.adk.agents.llm_agent import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+from google.genai import types
 
 root_agent = Agent(
     name="identity_investigator",
@@ -249,6 +250,7 @@ Replace the contents of `cloud_investigator/agent.py`:
 from google.adk.agents.llm_agent import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+from google.genai import types
 
 root_agent = Agent(
     name="cloud_investigator",
@@ -313,6 +315,7 @@ from pathlib import Path
 from google.adk.agents.llm_agent import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+from google.genai import types
 
 SKILL = Path("/root/skills/incident-report-writer/SKILL.md").read_text()
 
@@ -338,6 +341,11 @@ Follow this report standard exactly.
 
 {SKILL}
 """,
+    generate_content_config=types.GenerateContentConfig(
+        http_options=types.HttpOptions(
+            retry_options=types.HttpRetryOptions(initial_delay=2, attempts=6)
+        )
+    ),
     tools=[
         McpToolset(connection_params=SseConnectionParams(url="http://localhost:8005/sse")),  # SOAR
     ],
@@ -413,6 +421,7 @@ adk create incident_commander \
 
 ```python
 from google.adk.agents.llm_agent import Agent
+from google.genai import types
 from cti_agent.agent import root_agent as cti_agent
 from identity_investigator.agent import root_agent as identity_investigator
 from cloud_investigator.agent import root_agent as cloud_investigator
@@ -855,6 +864,11 @@ RECOMMENDED: [specific revocation and containment actions, most urgent first]
 
 Then return a short summary to the Incident Commander.
 """,
+    generate_content_config=types.GenerateContentConfig(
+        http_options=types.HttpOptions(
+            retry_options=types.HttpRetryOptions(initial_delay=2, attempts=6)
+        )
+    ),
     tools=[
         McpToolset(connection_params=SseConnectionParams(url="http://localhost:8001/sse")),  # Okta
         McpToolset(connection_params=SseConnectionParams(url="http://localhost:8002/sse")),  # CrowdStrike
@@ -862,6 +876,12 @@ Then return a short summary to the Incident Commander.
     ],
 )
 ```
+
+> **The retry config is not optional here.** Five agents running a full
+> investigation make dozens of model calls in a few minutes, and a sandbox
+> project's Vertex quota is not large. Without `HttpRetryOptions` a single
+> transient 429 ends the whole run. Every agent in this challenge should
+> have it.
 
 ### cloud_investigator
 
@@ -955,6 +975,11 @@ RECOMMENDED: [specific actions, most urgent first]
 
 Then return a short summary to the Incident Commander.
 """,
+    generate_content_config=types.GenerateContentConfig(
+        http_options=types.HttpOptions(
+            retry_options=types.HttpRetryOptions(initial_delay=2, attempts=6)
+        )
+    ),
     tools=[
         McpToolset(connection_params=SseConnectionParams(url="http://localhost:8003/sse")),  # Wiz
         McpToolset(connection_params=SseConnectionParams(url="http://localhost:8004/sse")),  # Salesforce
@@ -1088,6 +1113,11 @@ Once delegation is complete, give a short summary covering:
 
 Keep it under fifteen lines. The detail belongs in the report on the case wall.
 """,
+    generate_content_config=types.GenerateContentConfig(
+        http_options=types.HttpOptions(
+            retry_options=types.HttpRetryOptions(initial_delay=2, attempts=6)
+        )
+    ),
     sub_agents=[cti_agent, identity_investigator, cloud_investigator, ir_analyst],
 )
 ```

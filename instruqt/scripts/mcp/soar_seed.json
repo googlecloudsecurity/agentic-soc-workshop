@@ -3,39 +3,23 @@
     "id": 1053,
     "identifier": "SEC-1053",
     "name": "Case 1053 - Critical Priority (workshop copy)",
-    "description": "Workshop copy. Agent writes do not reach a live tenant.",
     "priority": "Critical",
     "status": "In Progress",
     "stage": "Incident",
     "assignedUser": "@Tier2",
     "creationTime": "2026-04-13T11:23:29Z",
-    "modificationTime": "2026-04-13T11:53:24Z",
     "alerts": [
       {
         "id": 34801,
         "name": "GOOGLECHRONICLE_RULE_SHINYHUNTERS_POST_AUTH_MFA_MANIPULATION",
         "severity": "Medium",
-        "riskScore": 75,
-        "count": 6,
-        "creationTime": "2026-04-13T11:24:00Z"
+        "riskScore": 75
       }
     ],
     "entities": [
-      {
-        "identifier": "149.50.97.144",
-        "entityType": "IP Address",
-        "isSuspicious": true
-      },
-      {
-        "identifier": "S.HUDSON@CYMBAL-INVESTMENTS.COM",
-        "entityType": "User",
-        "isSuspicious": false
-      },
-      {
-        "identifier": "CYMBAL-LT-HUDSON",
-        "entityType": "Hostname",
-        "isSuspicious": false
-      }
+      "149.50.97.144 (IP, suspicious)",
+      "s.hudson@cymbal-investments.com (User)",
+      "CYMBAL-LT-HUDSON (Hostname)"
     ],
     "tags": ["shinyhunters", "account-takeover", "data-exfiltration"]
   },
@@ -44,25 +28,25 @@
       "id": 56001,
       "author": "Automation",
       "timestamp": "2026-04-13T11:41:58Z",
-      "text": "TIN_INVESTIGATION:\n\nAlert: GOOGLECHRONICLE_RULE_SHINYHUNTERS_POST_AUTH_MFA_MANIPULATION\n\nVerdict: False Positive\nConfidence: High Confidence\n\nSummary:\nThe Okta account for user s.hudson was flagged for potential post-vishing\naccount takeover (ShinyHunters style). The activity involved a series of\nfailed login attempts from IP 149.50.97.144 followed by a successful\nauthentication and the immediate activation of a new Okta MFA factor\n(Passkey) using an Android emulator environment.\n\nAnalysis of the indicator 149.50.97.144 confirms a suspicious verdict.\nBroad SIEM searches targeting the specific Android emulator user agent\n('com.okta.android.auth/8.19.0 okta-sdk-kotlin/2.3.0 Android/16\nGenymobile/Phone') and the source IP 149.50.97.144 across the surrounding\nsix-day period confirmed the malicious activity was highly localized and\nisolated to the compromised account of s.hudson. No evidence of lateral\nmovement or targeting of other internal accounts by this actor was\nidentified.\n\nStatus: STATUS_COMPLETED_SUCCESS"
+      "text": "TIN_INVESTIGATION:\n\nAlert: SHINYHUNTERS_POST_AUTH_MFA_MANIPULATION\nVerdict: False Positive (High Confidence)\n\nOkta account s.hudson flagged for post-vishing takeover. Failed logins from\n149.50.97.144, then a successful auth, then immediate activation of a new\nOkta Passkey from an Android emulator (user agent contains Genymobile/Phone).\n\nSIEM searches for that user agent and for 149.50.97.144 across six days found\nthe activity isolated to s.hudson. No lateral movement to other accounts."
     },
     {
       "id": 56002,
       "author": "Automation",
       "timestamp": "2026-04-13T11:50:58Z",
-      "text": "GEMINI_FINDINGS:\n\nSource: Gemini interactive investigation, analyst-initiated\nQuery: All Salesforce events from 149.50.97.144 within the past month\n\nSalesforce Exfiltration Discovered:\n- Document searches by s.hudson (attacker session) at 11:03-11:05 UTC\n  Search keywords: confidential, internal, trading strategy, portfolio, proposal\n- 7 documents downloaded 11:08:03-11:08:25 UTC\n  User agent: python-requests/2.31.0 (scripted bulk download, not a browser)\n\n  Files:\n    Q4_Investment_Report_Confidential.pdf\n    Client_Portfolio_2026_Internal.xlsx\n    Trading_Strategy_Confidential_2026.docx\n    Board_Deck_Internal_Jan2026.pptx\n    M&A_Proposal_Confidential_Draft.pdf\n    Investor_Relations_Q4_Confidential.pdf\n    Fund_Performance_Internal_YTD.xlsx\n\n- POST to Salesforce Aura endpoint at 11:20 UTC (likely data staging)\n\nAssessment: Automated bulk exfiltration of financial and M&A documents.\nRegulatory exposure: SEC Rule 17a-4 (trading records), SOX (financial\nrecords), MNPI."
+      "text": "GEMINI_FINDINGS:\n\nAnalyst-initiated Gemini investigation of Salesforce events from\n149.50.97.144.\n\n11:03-11:05 UTC: document searches for confidential, internal, trading\nstrategy, portfolio, proposal.\n\n11:08:03-11:08:25 UTC: 7 documents downloaded, user agent\npython-requests/2.31.0 (scripted, not a browser):\n  Q4_Investment_Report_Confidential.pdf\n  Client_Portfolio_2026_Internal.xlsx\n  Trading_Strategy_Confidential_2026.docx\n  Board_Deck_Internal_Jan2026.pptx\n  M&A_Proposal_Confidential_Draft.pdf\n  Investor_Relations_Q4_Confidential.pdf\n  Fund_Performance_Internal_YTD.xlsx\n\n11:20 UTC: POST to the Salesforce Aura endpoint, likely data staging.\n\nAssessment: automated bulk exfiltration. Regulatory exposure under SEC Rule\n17a-4, SOX and MNPI."
     },
     {
       "id": 56003,
       "author": "Automation",
       "timestamp": "2026-04-13T11:51:47Z",
-      "text": "EVIDENCE ASSESSMENT\n\nVerdict assessment: revise\nRecommended priority: Critical\nEvidence sufficiency: partial\nReady to escalate: True\n\nWHY\nThe initial automated triage verdict of 'False Positive' was based solely\non the Okta activity and a lack of lateral movement within the identity\nprovider. Subsequent investigation, documented in the 'GEMINI_FINDINGS'\ncomment, revealed confirmed data exfiltration from Salesforce. This\nincluded searches for sensitive keywords and the download of seven\nconfidential financial and M&A documents. This direct evidence of data\nloss and regulatory exposure supersedes the initial assessment.\n\nOPEN QUESTIONS - not answerable from the SIEM\n1. What is the current status of the Passkey MFA factor for s.hudson's\n   Okta account, and have all active sessions originating from\n   149.50.97.144 been terminated?\nNeeds: Okta\nWhy: To ensure immediate revocation of the attacker's access and prevent\nany further use of the compromised MFA factor or existing sessions.\n\n2. Is there any evidence of malicious activity on CYMBAL-LT-HUDSON that\n   facilitated the initial credential compromise or provided persistent\n   access?\nNeeds: CrowdStrike\nWhy: Determining the initial compromise vector and endpoint status is\ncrucial for remediating compromised assets and understanding whether the\nattacker has a broader foothold.\n\n3. Within Salesforce, did the attacker perform any actions beyond\n   searching and downloading documents, such as modifying records,\n   authorizing connected applications, or accessing other objects?\nNeeds: Salesforce\nWhy: This determines the full extent of data loss and whether any\npersistent access mechanism was established inside the CRM itself.\n\n4. What cloud resources could the compromised s.hudson identity reach\n   through its federated access, and is there evidence the attacker used\n   that path?\nNeeds: Wiz\nWhy: Federated identity extends the blast radius beyond SaaS. Standing\nexposure must be assessed even where no cloud activity occurred."
+      "text": "EVIDENCE ASSESSMENT\n\nVerdict assessment: revise\nRecommended priority: Critical\nEvidence sufficiency: partial\nReady to escalate: True\n\nWHY\nTriage returned False Positive from the Okta activity alone. GEMINI_FINDINGS\nlater confirmed exfiltration of seven confidential financial and M&A\ndocuments from Salesforce. That evidence supersedes the initial assessment.\n\nOPEN QUESTIONS, not answerable from the SIEM\n1. Is the Passkey factor still enrolled, and are sessions from 149.50.97.144\n   still active? Needs: Okta. Determines whether the attacker still has access.\n2. Did anything malicious run on CYMBAL-LT-HUDSON, and is it contained?\n   Needs: CrowdStrike. Determines the compromise vector and endpoint scope.\n3. In Salesforce, what happened beyond searching and downloading? Records\n   modified, connected apps authorized, other objects accessed?\n   Needs: Salesforce. Determines full data impact and any CRM persistence.\n4. What cloud resources can this federated identity reach, and did the\n   attacker use that path? Needs: Wiz. Blast radius beyond SaaS."
     },
     {
       "id": 56004,
       "author": "Automation",
       "timestamp": "2026-04-13T11:53:24Z",
-      "text": "ESCALATED TO TIER 2\n\nEscalation approved by the analyst. The case-level assessment reviewed the\nfull case wall, including findings added after the initial triage ran, and\nrecommended Critical priority.\n\nOpen questions remain that cannot be answered from SIEM telemetry. They\nrequire live platform access. See the EVIDENCE ASSESSMENT comment above\nfor the full list and the reasoning behind each one."
+      "text": "ESCALATED TO TIER 2\n\nEscalation approved by the analyst. Priority raised to Critical. The open\nquestions above require live platform access."
     }
   ]
 }

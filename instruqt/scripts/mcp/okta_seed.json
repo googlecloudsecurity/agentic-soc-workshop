@@ -1,48 +1,32 @@
 {
-  "org": {
-    "victim": "s.hudson@cymbal-investments.com",
-    "attacker_ip": "149.50.97.144",
-    "legit_ip": "96.6.127.53",
-    "emulator_user_agent": "com.okta.android.auth/8.19.0 okta-sdk-kotlin/2.3.0 Android/16 Genymobile/Phone",
-    "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36"
-  },
   "users": {
     "s.hudson@cymbal-investments.com": {
       "id": "00uhudson0000001",
+      "name": "Saul Hudson",
+      "title": "Senior Portfolio Manager",
       "status": "ACTIVE",
-      "profile": {
-        "displayName": "Saul Hudson",
-        "title": "Senior Portfolio Manager",
-        "department": "Investment Operations",
-        "manager": "p.hewson@cymbal-investments.com"
-      },
-      "created": "2023-02-14T09:00:00Z",
       "lastLogin": "2026-04-13T10:52:14Z",
       "passwordChanged": "2026-01-08T14:22:00Z",
-      "note": "Account is still ACTIVE. No containment action has been taken.",
+      "assigned_apps": ["Salesforce", "SharePoint", "Slack", "Google Drive", "DocuSign", "Workday", "Zoom", "GitHub"],
+      "note": "Status is still ACTIVE. No containment action has been taken on this account.",
       "active_sessions": [
         {
           "session_id": "ses-attacker-001",
           "created": "2026-04-13T10:52:14Z",
-          "last_active": "2026-04-13T11:20:14Z",
           "expires": "2026-04-20T10:52:14Z",
           "source_ip": "149.50.97.144",
           "location": "Warsaw, Poland",
           "asn": "AS201814 MEVSPACE sp. z o.o.",
-          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
           "status": "ACTIVE",
           "suspicious": true,
-          "note": "Still active. Not revoked. Session lifetime is 7 days."
+          "note": "Still active, not revoked. 7 day lifetime."
         },
         {
           "session_id": "ses-hudson-legit-044",
           "created": "2026-04-13T08:41:07Z",
-          "last_active": "2026-04-13T09:15:33Z",
           "expires": "2026-04-20T08:41:07Z",
           "source_ip": "96.6.127.53",
-          "location": "Amsterdam, Netherlands",
-          "asn": "AS3356 Corporate VPN egress",
-          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
+          "location": "Amsterdam, corporate VPN egress",
           "status": "ACTIVE",
           "suspicious": false
         }
@@ -50,59 +34,38 @@
       "enrolled_factors": [
         {
           "factor_id": "mfa9genymobile00001",
-          "factor_type": "signed_nonce",
-          "provider": "OKTA",
-          "display_name": "Okta FastPass (Passkey)",
+          "type": "signed_nonce (Okta FastPass / Passkey)",
           "status": "ACTIVE",
           "enrolled": "2026-04-13T10:53:07Z",
           "enrolled_from_ip": "149.50.97.144",
-          "device_platform": "ANDROID",
-          "device_name": "Genymobile Phone",
-          "is_emulator": true,
+          "device": "ANDROID, Genymobile Phone, is_emulator=true",
           "suspicious": true,
-          "note": "Enrolled 53 seconds after the successful authentication, from the attacker IP, on an Android emulator. Still ACTIVE. Cymbal's approved factor types are YubiKey and Okta Verify on corporate devices; this is neither."
+          "note": "Enrolled 53 seconds after the successful auth, from the attacker IP, on an emulator. Still ACTIVE. Cymbal approves only YubiKey and Okta Verify on corporate devices."
         },
         {
           "factor_id": "mfa4yubikey000001",
-          "factor_type": "webauthn",
-          "provider": "FIDO",
-          "display_name": "YubiKey 5 NFC",
+          "type": "webauthn (YubiKey 5 NFC)",
           "status": "ACTIVE",
           "enrolled": "2023-02-14T10:15:00Z",
           "enrolled_from_ip": "96.6.127.53",
-          "device_platform": "CROSS_PLATFORM",
-          "is_emulator": false,
+          "device": "CROSS_PLATFORM",
           "suspicious": false
         }
-      ],
-      "assigned_apps": [
-        "Salesforce", "SharePoint", "Slack", "Google Drive",
-        "DocuSign", "Workday", "Zoom", "GitHub"
       ]
     },
     "g.sumner@cymbal-investments.com": {
       "id": "00usumner0000002",
+      "name": "Gordon Sumner",
+      "title": "IT Systems Administrator, Okta Admin",
       "status": "ACTIVE",
-      "profile": {
-        "displayName": "Gordon Sumner",
-        "title": "IT Systems Administrator",
-        "department": "Information Technology",
-        "manager": "p.hewson@cymbal-investments.com"
-      },
-      "created": "2021-06-01T09:00:00Z",
       "lastLogin": "2026-04-13T07:58:11Z",
-      "passwordChanged": "2026-03-02T11:04:00Z",
-      "note": "Okta administrator. A DNS query from CYMBAL-LT-SUMNER to cymbal-investments-sso.com was logged three days before the incident. No successful compromise of this account is recorded in Okta.",
+      "note": "A DNS query from CYMBAL-LT-SUMNER to cymbal-investments-sso.com was logged 3 days before the incident. Okta shows no compromise of this account.",
       "active_sessions": [
         {
           "session_id": "ses-sumner-legit-018",
           "created": "2026-04-13T07:58:11Z",
-          "last_active": "2026-04-13T11:40:02Z",
-          "expires": "2026-04-20T07:58:11Z",
           "source_ip": "96.6.127.53",
-          "location": "Amsterdam, Netherlands",
-          "asn": "AS3356 Corporate VPN egress",
-          "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/133.0.0.0 Safari/537.36",
+          "location": "Amsterdam, corporate VPN egress",
           "status": "ACTIVE",
           "suspicious": false
         }
@@ -110,71 +73,40 @@
       "enrolled_factors": [
         {
           "factor_id": "mfa4yubikey000002",
-          "factor_type": "webauthn",
-          "provider": "FIDO",
-          "display_name": "YubiKey 5 NFC",
+          "type": "webauthn (YubiKey 5 NFC)",
           "status": "ACTIVE",
           "enrolled": "2021-06-01T10:30:00Z",
-          "enrolled_from_ip": "96.6.127.53",
-          "device_platform": "CROSS_PLATFORM",
-          "is_emulator": false,
           "suspicious": false
         }
-      ],
-      "assigned_apps": ["Okta Admin Console", "SharePoint", "Slack", "Workday", "Zoom"]
+      ]
     },
     "p.hewson@cymbal-investments.com": {
       "id": "00uhewson0000003",
+      "name": "Paul Hewson",
+      "title": "Head of Investment Operations",
       "status": "ACTIVE",
-      "profile": {
-        "displayName": "Paul Hewson",
-        "title": "Head of Investment Operations",
-        "department": "Investment Operations",
-        "manager": null
-      },
-      "created": "2019-09-16T09:00:00Z",
       "lastLogin": "2026-04-13T09:31:44Z",
-      "passwordChanged": "2026-02-19T08:12:00Z",
       "active_sessions": [],
       "enrolled_factors": [
         {
           "factor_id": "mfa4yubikey000003",
-          "factor_type": "webauthn",
-          "provider": "FIDO",
-          "display_name": "YubiKey 5 NFC",
+          "type": "webauthn (YubiKey 5 NFC)",
           "status": "ACTIVE",
           "enrolled": "2019-09-16T11:02:00Z",
-          "enrolled_from_ip": "96.6.127.53",
-          "device_platform": "CROSS_PLATFORM",
-          "is_emulator": false,
           "suspicious": false
         }
-      ],
-      "assigned_apps": ["Salesforce", "SharePoint", "Slack", "Workday", "Zoom"]
+      ]
     }
   },
   "system_log": [
     {
-      "timestamp": "2026-04-13T10:42:11Z",
+      "timestamp": "2026-04-13T10:42:11Z to 10:51:48Z",
       "event_type": "user.session.start",
       "outcome": "FAILURE",
-      "reason": "INVALID_CREDENTIALS",
+      "count": 9,
       "actor": "s.hudson@cymbal-investments.com",
       "source_ip": "149.50.97.144",
-      "location": "Warsaw, Poland",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-      "detail": "First of 9 failed authentication attempts"
-    },
-    {
-      "timestamp": "2026-04-13T10:51:48Z",
-      "event_type": "user.session.start",
-      "outcome": "FAILURE",
-      "reason": "INVALID_CREDENTIALS",
-      "actor": "s.hudson@cymbal-investments.com",
-      "source_ip": "149.50.97.144",
-      "location": "Warsaw, Poland",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-      "detail": "Last of 9 failed authentication attempts"
+      "reason": "INVALID_CREDENTIALS"
     },
     {
       "timestamp": "2026-04-13T10:52:14Z",
@@ -182,11 +114,9 @@
       "outcome": "SUCCESS",
       "actor": "s.hudson@cymbal-investments.com",
       "source_ip": "149.50.97.144",
-      "location": "Warsaw, Poland",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
       "session_id": "ses-attacker-001",
       "mfa_satisfied_by": "mfa4yubikey000001",
-      "detail": "Successful authentication with the existing YubiKey factor satisfied. Password and MFA response were both supplied from the attacker IP in real time."
+      "detail": "Password and MFA response both supplied from the attacker IP in real time, satisfying the victim's existing YubiKey factor."
     },
     {
       "timestamp": "2026-04-13T10:53:07Z",
@@ -194,83 +124,20 @@
       "outcome": "SUCCESS",
       "actor": "s.hudson@cymbal-investments.com",
       "source_ip": "149.50.97.144",
-      "location": "Warsaw, Poland",
       "user_agent": "com.okta.android.auth/8.19.0 okta-sdk-kotlin/2.3.0 Android/16 Genymobile/Phone",
       "factor_id": "mfa9genymobile00001",
-      "detail": "New Okta FastPass factor activated from an Android emulator, 53 seconds after session start"
+      "detail": "New Okta FastPass factor activated from an Android emulator, 53 seconds after session start."
     },
     {
-      "timestamp": "2026-04-13T10:54:02Z",
+      "timestamp": "2026-04-13T10:54:02Z to 10:54:58Z",
       "event_type": "user.authentication.sso",
       "outcome": "SUCCESS",
+      "count": 8,
       "actor": "s.hudson@cymbal-investments.com",
       "source_ip": "149.50.97.144",
-      "app": "Salesforce",
-      "session_id": "ses-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T10:54:11Z",
-      "event_type": "user.authentication.sso",
-      "outcome": "SUCCESS",
-      "actor": "s.hudson@cymbal-investments.com",
-      "source_ip": "149.50.97.144",
-      "app": "SharePoint",
-      "session_id": "ses-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T10:54:19Z",
-      "event_type": "user.authentication.sso",
-      "outcome": "SUCCESS",
-      "actor": "s.hudson@cymbal-investments.com",
-      "source_ip": "149.50.97.144",
-      "app": "Google Drive",
-      "session_id": "ses-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T10:54:27Z",
-      "event_type": "user.authentication.sso",
-      "outcome": "SUCCESS",
-      "actor": "s.hudson@cymbal-investments.com",
-      "source_ip": "149.50.97.144",
-      "app": "Slack",
-      "session_id": "ses-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T10:54:34Z",
-      "event_type": "user.authentication.sso",
-      "outcome": "SUCCESS",
-      "actor": "s.hudson@cymbal-investments.com",
-      "source_ip": "149.50.97.144",
-      "app": "DocuSign",
-      "session_id": "ses-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T10:54:41Z",
-      "event_type": "user.authentication.sso",
-      "outcome": "SUCCESS",
-      "actor": "s.hudson@cymbal-investments.com",
-      "source_ip": "149.50.97.144",
-      "app": "Workday",
-      "session_id": "ses-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T10:54:49Z",
-      "event_type": "user.authentication.sso",
-      "outcome": "SUCCESS",
-      "actor": "s.hudson@cymbal-investments.com",
-      "source_ip": "149.50.97.144",
-      "app": "GitHub",
-      "session_id": "ses-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T10:54:58Z",
-      "event_type": "user.authentication.sso",
-      "outcome": "SUCCESS",
-      "actor": "s.hudson@cymbal-investments.com",
-      "source_ip": "149.50.97.144",
-      "app": "Zoom",
       "session_id": "ses-attacker-001",
-      "detail": "Eighth and final SSO authorization in a 56 second burst"
+      "apps": ["Salesforce", "SharePoint", "Google Drive", "Slack", "DocuSign", "Workday", "GitHub", "Zoom"],
+      "detail": "8 SSO authorizations in a 56 second burst."
     }
   ]
 }

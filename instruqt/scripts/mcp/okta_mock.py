@@ -31,7 +31,7 @@ SEED_PATH = Path(os.environ.get("OKTA_MOCK_SEED", Path(__file__).parent / "okta_
 
 _seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
 _USERS = _seed["users"]
-_LOG = sorted(_seed["system_log"], key=lambda r: r["timestamp"])
+_LOG = _seed["system_log"]
 
 mcp = FastMCP("okta-iam", host="0.0.0.0", port=PORT)
 
@@ -60,18 +60,16 @@ def list_users(query: str = "") -> dict:
     """
     out = []
     for email, u in _USERS.items():
-        profile = u.get("profile", {})
         if (
             not query
             or query.lower() in email.lower()
-            or query.lower() in profile.get("displayName", "").lower()
+            or query.lower() in u.get("name", "").lower()
         ):
             out.append(
                 {
                     "email": email,
-                    "id": u.get("id"),
-                    "name": profile.get("displayName"),
-                    "title": profile.get("title"),
+                    "name": u.get("name"),
+                    "title": u.get("title"),
                     "status": u.get("status"),
                     "lastLogin": u.get("lastLogin"),
                 }
@@ -81,8 +79,8 @@ def list_users(query: str = "") -> dict:
 
 @mcp.tool()
 def get_user_profile(user_email: str) -> dict:
-    """Get an Okta user profile: status, department, assigned applications,
-    and when the password was last changed.
+    """Get an Okta user profile: status, title, assigned applications, and
+    when the password was last changed.
 
     Account status matters for containment. An ACTIVE account after a
     confirmed compromise means no containment action has been taken.
@@ -96,9 +94,9 @@ def get_user_profile(user_email: str) -> dict:
     return {
         "email": user_email,
         "id": user.get("id"),
+        "name": user.get("name"),
+        "title": user.get("title"),
         "status": user.get("status"),
-        "profile": user.get("profile", {}),
-        "created": user.get("created"),
         "lastLogin": user.get("lastLogin"),
         "passwordChanged": user.get("passwordChanged"),
         "assigned_apps": user.get("assigned_apps", []),
@@ -156,15 +154,11 @@ def get_enrolled_factors(user_email: str) -> dict:
 
 
 @mcp.tool()
-def search_system_log(
-    source_ip: str = "",
-    actor: str = "",
-    event_type: str = "",
-) -> dict:
+def search_system_log(source_ip: str = "", actor: str = "", event_type: str = "") -> dict:
     """Search the Okta system log.
 
-    Every argument is an optional filter. Omit them all to return the full
-    log. Event types present: user.session.start,
+    Repeated events of the same kind are returned as one row with a time
+    range and a count. Event types present: user.session.start,
     user.mfa.factor.activate, user.authentication.sso.
 
     Args:

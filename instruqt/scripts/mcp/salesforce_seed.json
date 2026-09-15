@@ -1,34 +1,26 @@
 {
   "org": {
     "victim": "s.hudson@cymbal-investments.com",
-    "victim_id": "005hudson0000001",
     "attacker_ip": "149.50.97.144",
     "legit_ip": "96.6.127.53",
     "scripted_user_agent": "python-requests/2.31.0",
-    "browser_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-    "classification_note": "All seven documents carry Confidential or Internal classification labels in the Cymbal document taxonomy."
+    "browser_user_agent": "Chrome/133 (macOS)",
+    "classification_note": "All seven documents are labelled Confidential or Internal in the Cymbal document taxonomy."
   },
   "events": [
     {
       "timestamp": "2026-04-13T09:12:33Z",
       "event_type": "Login",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
       "source_ip": "96.6.127.53",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-      "login_type": "SAML Sso",
+      "user_agent": "Chrome/133 (macOS)",
       "status": "Success",
-      "session_id": "sfdc-hudson-legit-044",
-      "detail": "Routine login, corporate VPN egress"
+      "detail": "Routine SSO login from corporate VPN egress"
     },
     {
       "timestamp": "2026-04-13T10:54:08Z",
       "event_type": "Login",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
       "source_ip": "149.50.97.144",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-      "login_type": "SAML Sso",
+      "user_agent": "Chrome/133 (macOS)",
       "status": "Success",
       "session_id": "sfdc-attacker-001",
       "detail": "Federated login via Okta SSO"
@@ -36,181 +28,57 @@
     {
       "timestamp": "2026-04-13T10:54:41Z",
       "event_type": "ConnectedAppAuthorization",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
       "source_ip": "149.50.97.144",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
       "app_name": "Cymbal Data Sync",
-      "consumer_key": "3MVG9n_HvETGhr3B_cymbaldatasync",
       "scopes": ["api", "refresh_token", "offline_access"],
       "status": "Success",
-      "detail": "First authorization of this connected app for this user. Refresh token issued, valid until revoked."
+      "detail": "First authorization of this app for this user. Refresh token issued, valid until revoked."
     },
     {
-      "timestamp": "2026-04-13T11:03:12Z",
+      "timestamp": "2026-04-13T11:03:12Z to 11:05:19Z",
       "event_type": "LightningPageView",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
       "source_ip": "149.50.97.144",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
+      "user_agent": "Chrome/133 (macOS)",
       "page": "Search Results",
-      "search_term": "confidential",
-      "session_id": "sfdc-attacker-001"
+      "search_terms": ["confidential", "internal", "trading strategy", "portfolio", "proposal"],
+      "detail": "5 document searches in the attacker session"
     },
     {
-      "timestamp": "2026-04-13T11:03:48Z",
-      "event_type": "LightningPageView",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-      "page": "Search Results",
-      "search_term": "internal",
-      "session_id": "sfdc-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T11:04:21Z",
-      "event_type": "LightningPageView",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-      "page": "Search Results",
-      "search_term": "trading strategy",
-      "session_id": "sfdc-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T11:04:55Z",
-      "event_type": "LightningPageView",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-      "page": "Search Results",
-      "search_term": "portfolio",
-      "session_id": "sfdc-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T11:05:19Z",
-      "event_type": "LightningPageView",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/133.0.0.0 Safari/537.36",
-      "page": "Search Results",
-      "search_term": "proposal",
-      "session_id": "sfdc-attacker-001"
-    },
-    {
-      "timestamp": "2026-04-13T11:08:03Z",
+      "timestamp": "2026-04-13T11:08:03Z to 11:08:25Z",
       "event_type": "ContentDocumentLink",
       "operation": "Download",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
       "source_ip": "149.50.97.144",
       "user_agent": "python-requests/2.31.0",
-      "document_id": "069hudson-doc-001",
-      "document_title": "Q4_Investment_Report_Confidential.pdf",
-      "file_type": "pdf",
-      "auth_method": "OAuth refresh token (Cymbal Data Sync)"
-    },
-    {
-      "timestamp": "2026-04-13T11:08:07Z",
-      "event_type": "ContentDocumentLink",
-      "operation": "Download",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "python-requests/2.31.0",
-      "document_id": "069hudson-doc-002",
-      "document_title": "Client_Portfolio_2026_Internal.xlsx",
-      "file_type": "xlsx",
-      "auth_method": "OAuth refresh token (Cymbal Data Sync)"
-    },
-    {
-      "timestamp": "2026-04-13T11:08:11Z",
-      "event_type": "ContentDocumentLink",
-      "operation": "Download",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "python-requests/2.31.0",
-      "document_id": "069hudson-doc-003",
-      "document_title": "Trading_Strategy_Confidential_2026.docx",
-      "file_type": "docx",
-      "auth_method": "OAuth refresh token (Cymbal Data Sync)"
-    },
-    {
-      "timestamp": "2026-04-13T11:08:14Z",
-      "event_type": "ContentDocumentLink",
-      "operation": "Download",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "python-requests/2.31.0",
-      "document_id": "069hudson-doc-004",
-      "document_title": "Board_Deck_Internal_Jan2026.pptx",
-      "file_type": "pptx",
-      "auth_method": "OAuth refresh token (Cymbal Data Sync)"
-    },
-    {
-      "timestamp": "2026-04-13T11:08:18Z",
-      "event_type": "ContentDocumentLink",
-      "operation": "Download",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "python-requests/2.31.0",
-      "document_id": "069hudson-doc-005",
-      "document_title": "M&A_Proposal_Confidential_Draft.pdf",
-      "file_type": "pdf",
-      "auth_method": "OAuth refresh token (Cymbal Data Sync)"
-    },
-    {
-      "timestamp": "2026-04-13T11:08:21Z",
-      "event_type": "ContentDocumentLink",
-      "operation": "Download",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "python-requests/2.31.0",
-      "document_id": "069hudson-doc-006",
-      "document_title": "Investor_Relations_Q4_Confidential.pdf",
-      "file_type": "pdf",
-      "auth_method": "OAuth refresh token (Cymbal Data Sync)"
-    },
-    {
-      "timestamp": "2026-04-13T11:08:25Z",
-      "event_type": "ContentDocumentLink",
-      "operation": "Download",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
-      "source_ip": "149.50.97.144",
-      "user_agent": "python-requests/2.31.0",
-      "document_id": "069hudson-doc-007",
-      "document_title": "Fund_Performance_Internal_YTD.xlsx",
-      "file_type": "xlsx",
-      "auth_method": "OAuth refresh token (Cymbal Data Sync)"
+      "auth_method": "OAuth refresh token (Cymbal Data Sync)",
+      "document_count": 7,
+      "detail": "Scripted bulk download. Use get_document_access for the file names."
     },
     {
       "timestamp": "2026-04-13T11:20:14Z",
       "event_type": "ApiEvent",
       "operation": "POST",
-      "user": "s.hudson@cymbal-investments.com",
-      "user_id": "005hudson0000001",
       "source_ip": "149.50.97.144",
       "user_agent": "python-requests/2.31.0",
+      "auth_method": "OAuth refresh token (Cymbal Data Sync)",
       "endpoint": "/aura?r=1&aura.ApexAction.execute",
       "objects_queried": ["Account", "Contact"],
       "rows_returned": 301,
-      "auth_method": "OAuth refresh token (Cymbal Data Sync)",
-      "detail": "Bulk record retrieval through the Aura Apex action endpoint. Returned 301 Account and Contact records including client names, account values and primary contact email addresses."
+      "detail": "Bulk record retrieval. 301 Account and Contact records including client names, account values and primary contact emails."
     }
   ],
+  "documents": [
+    { "time": "11:08:03Z", "title": "Q4_Investment_Report_Confidential.pdf", "type": "pdf" },
+    { "time": "11:08:07Z", "title": "Client_Portfolio_2026_Internal.xlsx", "type": "xlsx" },
+    { "time": "11:08:11Z", "title": "Trading_Strategy_Confidential_2026.docx", "type": "docx" },
+    { "time": "11:08:14Z", "title": "Board_Deck_Internal_Jan2026.pptx", "type": "pptx" },
+    { "time": "11:08:18Z", "title": "M&A_Proposal_Confidential_Draft.pdf", "type": "pdf" },
+    { "time": "11:08:21Z", "title": "Investor_Relations_Q4_Confidential.pdf", "type": "pdf" },
+    { "time": "11:08:25Z", "title": "Fund_Performance_Internal_YTD.xlsx", "type": "xlsx" }
+  ],
+  "documents_note": "All downloaded 2026-04-13 from 149.50.97.144 by s.hudson, user agent python-requests/2.31.0, authenticated with the Cymbal Data Sync OAuth refresh token rather than the browser session.",
   "connected_apps": [
     {
       "app_name": "Cymbal Data Sync",
-      "consumer_key": "3MVG9n_HvETGhr3B_cymbaldatasync",
       "authorized_by": "s.hudson@cymbal-investments.com",
       "authorized_at": "2026-04-13T10:54:41Z",
       "authorized_from_ip": "149.50.97.144",
@@ -218,21 +86,19 @@
       "refresh_token_status": "VALID",
       "last_used": "2026-04-13T11:20:14Z",
       "publisher": "Unverified",
-      "note": "Not present in the Cymbal approved application inventory. First and only authorization is from the attacker IP."
+      "note": "Not in the Cymbal approved application inventory. Only authorization is from the attacker IP."
     },
     {
       "app_name": "Salesforce for Outlook",
-      "consumer_key": "3MVG9n_HvETGhr3B_sfdcoutlook",
       "authorized_by": "s.hudson@cymbal-investments.com",
       "authorized_at": "2025-11-02T14:08:12Z",
       "authorized_from_ip": "96.6.127.53",
       "scopes": ["api", "refresh_token"],
       "refresh_token_status": "VALID",
-      "last_used": "2026-04-13T08:44:02Z",
       "publisher": "Salesforce",
       "note": "Standard corporate deployment."
     }
   ],
   "record_modifications": [],
-  "record_modifications_note": "No create, update or delete operations recorded for this user in the window. All observed activity was read and export only."
+  "record_modifications_note": "No create, update or delete operations by this user in the window. All observed activity was read and export only."
 }

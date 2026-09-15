@@ -1,113 +1,61 @@
 {
   "hosts": {
     "CYMBAL-LT-HUDSON": {
-      "device_id": "cs-device-hudson-0001",
       "hostname": "CYMBAL-LT-HUDSON",
-      "platform": "Mac",
-      "os_version": "macOS Sequoia 15.6",
+      "device_id": "cs-device-hudson-0001",
+      "platform": "macOS Sequoia 15.6",
       "assigned_user": "s.hudson@cymbal-investments.com",
-      "sensor_version": "7.22.19507.0",
-      "sensor_status": "normal",
+      "sensor_status": "normal, reporting",
       "last_seen": "2026-04-13T11:52:08Z",
-      "first_seen": "2023-02-14T09:31:00Z",
-      "containment_status": "normal",
+      "containment_status": "normal, NOT contained",
       "external_ip": "96.6.127.53",
-      "local_ip": "10.24.8.117",
-      "note": "Sensor healthy and reporting. Host is NOT contained. External IP is the corporate VPN egress, not the attacker IP."
+      "note": "Sensor healthy throughout the incident window. External IP is the corporate VPN egress, not the attacker IP."
     },
     "CYMBAL-LT-SUMNER": {
-      "device_id": "cs-device-sumner-0002",
       "hostname": "CYMBAL-LT-SUMNER",
-      "platform": "Windows",
-      "os_version": "Windows 11 23H2",
+      "device_id": "cs-device-sumner-0002",
+      "platform": "Windows 11 23H2",
       "assigned_user": "g.sumner@cymbal-investments.com",
-      "sensor_version": "7.22.19507.0",
-      "sensor_status": "normal",
+      "sensor_status": "normal, reporting",
       "last_seen": "2026-04-13T11:48:22Z",
-      "first_seen": "2021-06-01T09:14:00Z",
-      "containment_status": "normal",
-      "external_ip": "96.6.127.53",
-      "local_ip": "10.24.8.043",
-      "note": "Sensor healthy and reporting. Host is NOT contained."
+      "containment_status": "normal, NOT contained",
+      "external_ip": "96.6.127.53"
     }
   },
   "detections": [
     {
       "detection_id": "ldt:cs-device-sumner-0002:88213004471",
       "hostname": "CYMBAL-LT-SUMNER",
-      "device_id": "cs-device-sumner-0002",
-      "username": "g.sumner",
-      "user_email": "g.sumner@cymbal-investments.com",
+      "user": "g.sumner@cymbal-investments.com",
       "severity": "Low",
       "confidence": "Medium",
       "tactic": "Command and Control",
-      "technique": "Web Protocols",
       "technique_id": "T1071.001",
       "timestamp": "2026-04-10T14:22:51Z",
       "status": "new",
       "description": "DNS resolution for a newly registered domain",
-      "detail": "Chrome resolved cymbal-investments-sso.com. The domain was registered 2 days earlier. No process execution followed and no credential entry was observed on this host. The user did not report a phishing attempt.",
-      "pattern_disposition": "detection only, not blocked",
-      "process": {
-        "name": "Google Chrome",
-        "path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        "command_line": "",
-        "parent": "launchd"
-      }
+      "detail": "Chrome resolved cymbal-investments-sso.com, registered 2 days earlier. Detection only, not blocked. No process execution followed, no credential entry observed on this host.",
+      "process": "Google Chrome, parent explorer.exe, no child processes"
     }
   ],
-  "no_detections_note": "No detections recorded for CYMBAL-LT-HUDSON in any severity, at any time. The endpoint sensor was healthy and reporting throughout the incident window.",
+  "no_detections_note": "No detections for CYMBAL-LT-HUDSON at any severity, at any time. The sensor was healthy and reporting throughout the incident window, so this is an absence of activity rather than an absence of visibility.",
   "process_trees": {
     "CYMBAL-LT-HUDSON": {
       "hostname": "CYMBAL-LT-HUDSON",
-      "window": "2026-04-13T10:30:00Z to 2026-04-13T12:00:00Z",
+      "window": "2026-04-13T10:30:00Z to 12:00:00Z",
       "suspicious_process_count": 0,
       "processes": [
-        {
-          "timestamp": "2026-04-13T08:39:02Z",
-          "name": "Google Chrome",
-          "path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-          "command_line": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-          "parent": "launchd",
-          "user": "s.hudson",
-          "suspicious": false
-        },
-        {
-          "timestamp": "2026-04-13T08:40:15Z",
-          "name": "Slack",
-          "path": "/Applications/Slack.app/Contents/MacOS/Slack",
-          "command_line": "/Applications/Slack.app/Contents/MacOS/Slack",
-          "parent": "launchd",
-          "user": "s.hudson",
-          "suspicious": false
-        },
-        {
-          "timestamp": "2026-04-13T09:02:44Z",
-          "name": "zoom.us",
-          "path": "/Applications/zoom.us.app/Contents/MacOS/zoom.us",
-          "command_line": "/Applications/zoom.us.app/Contents/MacOS/zoom.us",
-          "parent": "launchd",
-          "user": "s.hudson",
-          "suspicious": false
-        }
+        "Google Chrome (08:39, parent launchd)",
+        "Slack (08:40, parent launchd)",
+        "zoom.us (09:02, parent launchd)"
       ],
-      "note": "No process execution on this host during the incident window at all. Between 10:30 and 12:00 UTC the only activity recorded is routine application idle. No browser automation flags, no scripting interpreters, no dropped binaries, nothing spawned from a browser. The compromise never reached this endpoint."
+      "note": "No process execution at all during the incident window. Routine application idle only. No browser automation flags, no scripting interpreters, no dropped binaries, nothing spawned from a browser. The compromise never reached this endpoint."
     },
     "CYMBAL-LT-SUMNER": {
       "hostname": "CYMBAL-LT-SUMNER",
-      "window": "2026-04-10T14:00:00Z to 2026-04-10T15:00:00Z",
+      "window": "2026-04-10T14:00:00Z to 15:00:00Z",
       "suspicious_process_count": 0,
-      "processes": [
-        {
-          "timestamp": "2026-04-10T14:22:47Z",
-          "name": "chrome.exe",
-          "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-          "command_line": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\"",
-          "parent": "explorer.exe",
-          "user": "g.sumner",
-          "suspicious": false
-        }
-      ],
+      "processes": ["chrome.exe (14:22, parent explorer.exe)"],
       "note": "Browser activity only. No child processes, no downloads executed, no credential access tooling."
     }
   }

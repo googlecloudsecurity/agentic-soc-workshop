@@ -49,29 +49,23 @@ mcp = FastMCP("crowdstrike-edr", host="0.0.0.0", port=PORT)
 
 
 @mcp.tool()
-def list_detections(hostname: str = "", severity: str = "", username: str = "") -> dict:
+def list_detections(hostname: str = "", severity: str = "") -> dict:
     """List CrowdStrike endpoint detections, optionally filtered.
 
     An empty result for a host is a finding, not a failed query. It rules
     out endpoint-based compromise and points the investigation elsewhere.
+    Check sensor health with get_host_info before treating an empty result
+    as meaningful.
 
     Args:
         hostname: Filter to one host.
         severity: Filter to Critical, High, Medium, Low or Informational.
-        username: Filter to one username or email.
     """
     rows = _DETECTIONS
     if hostname:
         rows = [d for d in rows if hostname.upper() in d.get("hostname", "").upper()]
     if severity:
         rows = [d for d in rows if d.get("severity", "").lower() == severity.lower()]
-    if username:
-        rows = [
-            d
-            for d in rows
-            if username.lower() in d.get("username", "").lower()
-            or username.lower() in d.get("user_email", "").lower()
-        ]
     result = {"total": len(rows), "detections": rows}
     if not rows:
         result["note"] = _NO_DET_NOTE
@@ -80,8 +74,7 @@ def list_detections(hostname: str = "", severity: str = "", username: str = "") 
 
 @mcp.tool()
 def get_detection_details(detection_id: str) -> dict:
-    """Get full details for one detection, including the process that
-    triggered it and whether the pattern was blocked or detected only.
+    """Get full details for one detection.
 
     Args:
         detection_id: The detection ID from list_detections.
@@ -91,14 +84,14 @@ def get_detection_details(detection_id: str) -> dict:
             return d
     return {
         "error": f"Detection {detection_id} not found",
-        "available_detection_ids": [d["detection_id"] for d in _DETECTIONS],
+        "available": [d["detection_id"] for d in _DETECTIONS],
     }
 
 
 @mcp.tool()
 def get_host_info(hostname: str) -> dict:
-    """Get host details: platform, OS, assigned user, sensor health,
-    containment status and observed IP addresses.
+    """Get host details: platform, assigned user, sensor health,
+    containment status and external IP.
 
     Containment status answers whether anyone has acted. Sensor health
     answers whether an empty detection list is trustworthy.
@@ -106,20 +99,15 @@ def get_host_info(hostname: str) -> dict:
     Args:
         hostname: The hostname, for example CYMBAL-LT-HUDSON.
     """
-    host = _HOSTS.get(hostname.upper()) or next(
-        (v for k, v in _HOSTS.items() if k.upper() == hostname.upper()), None
-    )
+    host = next((v for k, v in _HOSTS.items() if k.upper() == hostname.upper()), None)
     if not host:
-        return {
-            "error": f"Host {hostname} not found",
-            "available_hosts": list(_HOSTS.keys()),
-        }
+        return {"error": f"Host {hostname} not found", "available": list(_HOSTS.keys())}
     return host
 
 
 @mcp.tool()
 def get_process_tree(hostname: str) -> dict:
-    """Get the process execution tree for a host during the incident window.
+    """Get process execution for a host during the incident window.
 
     Look for scripting interpreters, browser automation flags, binaries
     dropped to temporary directories, and anything spawned by a browser.
@@ -128,13 +116,11 @@ def get_process_tree(hostname: str) -> dict:
     Args:
         hostname: The hostname, for example CYMBAL-LT-HUDSON.
     """
-    tree = _TREES.get(hostname.upper()) or next(
-        (v for k, v in _TREES.items() if k.upper() == hostname.upper()), None
-    )
+    tree = next((v for k, v in _TREES.items() if k.upper() == hostname.upper()), None)
     if not tree:
         return {
             "error": f"No process tree recorded for {hostname}",
-            "available_hosts": list(_TREES.keys()),
+            "available": list(_TREES.keys()),
         }
     return tree
 

@@ -69,12 +69,15 @@ fetch "${REPO_RAW}/skills/incident-report-writer/SKILL.md" \
       "${SKILLS_DIR}/incident-report-writer/SKILL.md" || exit 1
 
 # --- start servers ----------------------------------------------------------
-# Deliberately not `curl ... | head | grep -q`: grep exits on first match,
-# curl takes SIGPIPE, and under `set -o pipefail` the pipeline reports
-# failure even when the marker was found.
+# /sse is a long-lived stream. curl connects, receives the endpoint event,
+# then waits for more and gets killed by --max-time, exiting 28. That is
+# expected, so the exit code is deliberately ignored and only the body is
+# tested. Do not add `|| return 1` here, and do not pipe to grep either:
+# grep exits on first match, curl takes SIGPIPE, and pipefail reports
+# failure even though the marker was found.
 serving() {
   local body
-  body=$(curl -s --max-time 2 "http://localhost:$1/sse" 2>/dev/null) || return 1
+  body=$(curl -s --max-time 2 "http://localhost:$1/sse" 2>/dev/null || true)
   [[ "${body}" == *"event:"* ]]
 }
 
