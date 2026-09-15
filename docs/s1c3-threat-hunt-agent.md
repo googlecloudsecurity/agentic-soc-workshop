@@ -4,7 +4,7 @@
 |---|---|
 | **Time** | 15 minutes |
 | **Platform** | Google SecOps SIEM, Emerging Threats Center + Threat Hunt agent |
-| **Goal** | Find the campaign behind your incident in the Emerging Threats Center and assess what detection coverage you actually have for it |
+| **Goal** | Find the campaign behind your incident in the Emerging Threats Center, assess what detection coverage you actually have, and see where autonomous hunting fits |
 
 ---
 
@@ -28,14 +28,17 @@ difference between them matters.
 
 | | Emerging Threats Center | Threat Hunt agent |
 |---|---|---|
-| Starts from | A curated GTI campaign | A campaign, actor, malware family, or MITRE TTP you select |
-| Looks back | 12 months of telemetry for IOC matches | Up to 30 days of telemetry |
-| Runtime | Immediate, the matching is already done | 60 to 90 minutes, autonomous, in the background |
-| Output | IOC matches, detection matches, campaign-mapped rules | A dedicated case with an explicit verdict and evidence |
+| Starts from | A curated GTI campaign | A hunting objective you set |
+| Method | Indicator matching against your telemetry | Autonomous multi-step YARA-L 2.0 investigation |
+| Output | IOC matches, detection matches, campaign-mapped rules | A dedicated case with an explicit determination and its evidence |
+| Answers | Do this campaign's indicators appear in our data? | Is this behaviour present, whether or not the indicators match? |
 
-The Emerging Threats Center is a standing answer to "are we affected." The
-Threat Hunt agent is a deep multi-stage investigation you launch when you
-want proof either way.
+The Emerging Threats Center is a standing answer to "are we affected". The
+Threat Hunt agent is a deep investigation you launch when you want proof
+either way.
+
+Only the Emerging Threats Center is available in this sandbox. Part 2 is
+background on the other one.
 
 ---
 
@@ -110,49 +113,67 @@ yourself:
 
 ---
 
-## Part 2: review the Threat Hunt
+## Part 2: the Threat Hunt agent
 
-> **Under construction.** Nobody has run a threat hunt for this environment
-> yet, so this part is a read-through rather than something you can work
-> through. Part 1 above is ready to go. Nothing later in the workshop
-> depends on this section.
+**What you're doing:** reading, not clicking. The Threat Hunt agent is not
+wired into this sandbox, so this part is background on a capability you
+will meet in a real deployment.
 
-**What you're doing:** reading the output of an autonomous hunt that ran
-against this campaign before the workshop began.
+It matters here because it answers the question Part 1 raised at a
+different scale. The Emerging Threats Center tells you whether campaign
+indicators match your telemetry. A hunt goes looking for the behaviour
+even where no indicator matches.
 
-A hunt runs for 60 to 90 minutes. You are not going to watch one finish
-inside a 15 minute challenge, so one has been run for you, which is also
-how this works in practice. You launch a hunt, you go and do something
-else, and you come back to a case.
+### What it is
 
-**Task 2.1** — Open **Case Management** and find the case prefixed
-**Threat Hunt for**. Hunts create their own dedicated case, tagged
-`Threat Hunt`, separate from your incident case.
+The Threat Hunt agent is an autonomous capability powered by Gemini and
+grounded in three things: Google Threat Intelligence, Mandiant frontline
+expertise, and the MITRE ATT&CK framework. It automates proactive threat
+hunting across historical security telemetry.
 
-**Task 2.2** — Read the verdict. The agent returns an explicit answer, not
-a pile of search results.
+You give it a hunting objective. It plans the hunt, writes and runs
+**YARA-L 2.0** queries against your historical data, reviews what comes
+back, and decides what to look at next. At the end it issues a
+**determination**, a final verdict such as Substantial Evidence, Evidence
+Found, or Threat Not Found.
 
-**Task 2.3** — Open the execution detail and work through how it got there:
+### Why that is different from a search
 
-- The multi-step hunt plan the agent generated
-- The rationale for each step
-- The underlying **YARA-L 2.0 queries** it actually ran
-- The extracted entity summaries: IPs, hostnames, command lines, hashes
+A search answers the question you asked. A hunt decides which questions to
+ask.
 
-> **The transparency is the point.** An agent that returns a verdict you
-> cannot audit is not usable in a SOC. Read the queries. You are checking
-> whether you agree with how it looked, not just what it found.
+Hunting is the most expensive thing a SOC does with its time, because most
+hunts find nothing. That is not failure. "We looked across our historical
+telemetry for this actor's behaviour and found no evidence" is an answer a
+CISO can act on, and it is worth having. But paying a senior analyst to
+produce it over and over is why hunting is the first thing to get dropped
+when the queue is full.
 
-**Task 2.4** — Compare the hunt's scope to your case.
+An agent that hunts autonomously changes that arithmetic. The cost of a
+clean negative drops far enough that you can afford to ask the question
+routinely rather than only after an incident.
 
-> **TODO, fill in during build:** what the pre-run hunt actually found, and
-> whether it is complementary to the incident (a second affected user, an
-> earlier failed attempt) or a clean negative.
+### How it connects to Part 1
 
-> **A clean negative is a real result.** Most hunts come back empty, and
-> that is exactly why hunting is expensive for humans and cheap for agents.
-> "We looked across 30 days of telemetry and this campaign touched one
-> account" is an answer a CISO can act on.
+The campaign entry you just read is an integration point for the agent.
+That is also why, during public preview, the Threat Hunt agent is limited
+to Enterprise Plus: the Emerging Threats integration heavily invokes Google
+Threat Intelligence.
+
+It also needs the enhanced Case Management experience enabled, because a
+hunt produces its own case rather than attaching to an existing one. The
+hunt is an investigation in its own right, with its own evidence and its own
+verdict.
+
+> **Read the queries, not just the determination.** Same discipline as
+> Challenge 1. The agent shows the YARA-L it ran and the reasoning behind
+> each step. A verdict you cannot audit is not usable in a SOC, and the only
+> way to know what a hunt did not look at is to read what it did.
+
+> **Both of these are Public Preview** and covered by pre-GA terms.
+> Availability, licensing and behaviour may have changed since this guide
+> was written. Check the product documentation linked at the bottom of this
+> page before quoting any of it to a customer.
 
 ---
 
@@ -165,11 +186,7 @@ You have:
   UNC6671
 - Read the campaign's coverage panel and found curated rules shipped but
   disabled
-
-Still to come, once the hunt is built:
-
-- Read the Threat Hunt agent's verdict and its underlying queries
-- Compared campaign-wide scope against your single-incident scope
+- Understood where the Threat Hunt agent fits alongside campaign coverage
 
 ---
 

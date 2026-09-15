@@ -273,8 +273,8 @@ Section 2.
 ## Next: challenge 5
 
 The case is with Tier 2 and four questions are open. Before you build the
-team that answers them, one more thing this incident should have produced:
-a detection that fires the next time.
+team that answers them, one more agent is worth knowing about: the one
+whose job is making sure this fires the next time.
 
 ---
 
