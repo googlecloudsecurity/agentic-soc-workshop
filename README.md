@@ -165,8 +165,10 @@ have to match.
 ## The SOAR case wall in Section 2
 
 Section 2 agents read and write a case wall through a **mock SOAR MCP
-server** on port 8004, SSE transport, matching the existing Okta (8001),
-CrowdStrike (8002) and Wiz (8003) mocks. Decided, not yet built.
+server** on port 8005, SSE transport, alongside the Okta (8001),
+CrowdStrike (8002), Wiz (8003) and Salesforce (8004) mocks.
+
+Source: `instruqt/scripts/mcp/soar_mock.py`.
 
 Why mock rather than the real SOAR MCP:
 
@@ -181,27 +183,44 @@ Why mock rather than the real SOAR MCP:
 
 Design:
 
-- Tools: `get_case_full_details(case_id)`,
-  `post_case_comment(case_id, comment)`, optional `list_case_comments`
+- Tools and return shapes mirror the real `secops-soar` MCP server:
+  `list_cases`, `get_case_full_details`, `post_case_comment`,
+  `change_case_priority`. Agent instructions written against the mock work
+  unchanged against a live tenant
 - Accepts any `case_id` and returns the same seeded case
-- Returns clean comment objects, **not** the real API's
-  `activities[].activityDataJson.commentForClient` nesting. The mock is a
-  simplified SOAR, not a replica
-- Upsert by comment prefix so reruns are idempotent and L2 never reads
-  three versions of the same findings
+- Upserts agent comments by prefix, so reruns are idempotent and the IR
+  Analyst never reads three versions of the same findings
 - Seeded verbatim from a real Section 1 run: `TIN_INVESTIGATION:`,
   `GEMINI_FINDINGS:`, `EVIDENCE ASSESSMENT`, and the escalation comment.
   The assessment's four open questions are the Section 2 agenda
-- Mark the case visibly as a workshop copy so nobody mistakes it for their
-  own
+- Case name carries `(workshop copy)` so nobody mistakes it for their own
 
-Keep the seed a generated artifact rather than hand-written text. Pull it
+Keep the seed a generated artifact rather than hand-edited text. Pull it
 from a golden case with Get Case Details after any playbook change.
 
 **CTF constraint.** Never put a flag answer somewhere only one path can
 reach, and never let mock text drift from the real SIEM data. The
 `EVIDENCE ASSESSMENT` open questions are generated prose and must never be
 a flag answer.
+
+---
+
+## Section 2 agent team
+
+| Agent | Role | Platforms | Case wall |
+|---|---|---|---|
+| Incident Commander | Delegates and sequences only | none | no |
+| Identity & Endpoint Investigator | Session state, MFA factors, endpoint | Okta, CrowdStrike | read, write |
+| Cloud & SaaS Investigator | CRM activity, connected apps, cloud reach | Salesforce, Wiz | read, write |
+| CTI Analyst | Actor attribution, built in S2 C2 | GTI | read, write |
+| IR Analyst | Reads the wall, writes the report | none | read, write |
+
+`mitre_agent` from S2 C1 is foundational only and is not part of the team.
+
+The IR Analyst's report standard lives in `agents/skills/incident-report.md`
+and is interpolated into its instruction at module load. Participants are
+invited to edit it and rerun. The skill is grounded on the CISA incident
+response playbooks.
 
 ---
 
@@ -244,15 +263,15 @@ will find.
 - `s1c3` Part 2 needs a pre-run Threat Hunt before it can be completed.
   Hunts run 60 to 90 minutes, so it can never be run live inside the
   challenge.
-- `s1c5`, `s2c2`, `s2c3` and `s3-ctf` are stubs.
-- The mock SOAR MCP server on port 8004 is decided but not built. See the
-  section above.
-- Add `"mcp<2"` to the `uv pip install` line in the adk host's track setup.
-  Four mocks now import `mcp.server.fastmcp`, which MCP Python SDK v2.0.0
-  removed.
+- `s1c5` and `s3-ctf` are stubs.
+- The Okta (8001) and CrowdStrike (8002) mocks are not in this repo. Move
+  them under `instruqt/scripts/mcp/` so all five live together.
+- `wiz_mock.py` here replaces the earlier S3-bucket version. The angle is
+  now federated identity into Google Cloud, which fits the scenario. Check
+  it against whatever is currently deployed before switching.
 - The Section 2 grader runs agents live, which is slow. Static analysis of
-  `agent.py` would be faster. `s2c1` Step 6 describes live grading and would
-  need updating.
+  `agent.py` would be faster. Every guide's grading step describes live
+  grading and would need updating.
 - `ref-cheatsheet.md` needs a scope decision: if it lists scenario IOCs it
   becomes a CTF answer key served to every participant.
 - CTF flags fall into tiers by which path can reach them: SIEM-answerable by
