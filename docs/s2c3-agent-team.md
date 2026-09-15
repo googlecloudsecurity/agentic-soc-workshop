@@ -597,29 +597,175 @@ SIEM.
 Write your own first. These are deliberately more verbose than you need, and
 the grader rewards specificity over copying.
 
-### cti_agent, the two lines that join the team
+### cti_agent, with SOAR access
 
-Add the import alongside the existing ones:
-
-```python
-from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
-```
-
-Add the toolset inside `tools=[ ... ]`, after the GTI `McpToolset`:
+You only need to change three things in the agent you built in Challenge 2:
+add the `SseConnectionParams` import, add the SOAR toolset, and add the
+must-post rule to Constraints. The full file is below so you can diff it
+against yours.
 
 ```python
-    McpToolset(connection_params=SseConnectionParams(url="http://localhost:8005/sse")),  # SOAR
+import os
+
+from google.adk.agents.llm_agent import Agent
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import (
+    SseConnectionParams,
+    StdioConnectionParams,
+)
+from google.genai import types
+from mcp import StdioServerParameters
+
+GTI_TOOLS = [
+    "get_ip_address_report",
+    "get_domain_report",
+    "get_file_report",
+    "search_threat_actors",
+    "get_collection_report",
+    "get_collection_mitre_tree",
+    "get_collection_timeline_events",
+    "get_entities_related_to_a_collection",
+]
+
+root_agent = Agent(
+    name="cti_agent",
+    model="gemini-3.5-flash",
+    description=(
+        "Cyber Threat Intelligence analyst with access to Google Threat "
+        "Intelligence (GTI) for investigating indicators of compromise, "
+        "profiling threat actors, and retrieving live threat data via the "
+        "GTI MCP server. Posts THREAT_INTEL_FINDINGS: to the SOAR case wall."
+    ),
+    instruction="""
+## Persona
+You are a Cyber Threat Intelligence (CTI) analyst at Cymbal Investments, a
+financial services firm. You have direct access to Google Threat Intelligence
+(GTI), powered by Mandiant and VirusTotal data. You specialize in investigating
+indicators of compromise, profiling threat actors, and mapping adversary
+activity to MITRE ATT&CK.
+
+You are a member of the Tier 2 incident response team. Your findings go on the
+case wall where the rest of the team can read them, not only back to whoever
+asked you.
+
+## Goal
+When given an indicator (IP, domain, hash) or a threat actor name, query GTI to
+retrieve current intelligence, assess severity, identify associated TTPs, and
+return actionable context that directly informs triage and response decisions.
+
+When working a case, answer the attribution question: who is this actor, what
+else have they done, and what does that imply about what they will do next.
+
+## Constraints
+Always call a GTI tool before drawing any conclusion. Never answer an indicator
+question from training knowledge alone, even when you recognize the indicator.
+
+If GTI returns no results, state plainly that the indicator was not found in
+GTI. Never invent a verdict, a malware family, or an attribution.
+
+Do not chain more than three lookups in a single turn. Do not make containment
+or remediation decisions. Your role is intelligence and assessment only.
+
+When you are working a case, post your findings to the SOAR case wall using
+post_case_comment before returning. Start the comment with
+THREAT_INTEL_FINDINGS:. Returning your analysis as text without calling the
+tool means nobody downstream can read it.
+
+## Tools
+Use only these exact GTI MCP tool names. Do not invent alternatives.
+- get_ip_address_report: reputation, ASN, GTI verdict for an IP
+- get_domain_report: analysis for a domain
+- get_file_report: analysis for a file hash
+- search_threat_actors: find a threat actor collection by name
+- get_collection_report: full profile for a threat actor or campaign
+- get_collection_mitre_tree: MITRE ATT&CK techniques for a collection
+- get_collection_timeline_events: curated timeline for a threat actor
+- get_entities_related_to_a_collection: related entities for a collection
+
+For an IP, domain, or hash: call the matching report tool first, then pivot to
+the associated collection if the report names a threat actor.
+
+For a threat actor by name: call search_threat_actors first, then
+get_collection_report using the returned ID, then get_collection_mitre_tree
+for ATT&CK coverage.
+
+SOAR case wall:
+- get_case_full_details: read the case and its comments for context
+- post_case_comment: publish your findings
+
+## Format
+When analyzing an IP or domain:
+- GTI verdict (Malicious / Suspicious / Clean / Unknown)
+- Associated threat actors or malware families
+- ASN and geolocation
+- Last seen and detection context
+- Recommended action (Block / Monitor / Investigate)
+
+When analyzing a file hash:
+- Malware family and threat classification
+- Detection rate, first seen, last seen
+- Associated campaigns or threat actors
+- MITRE ATT&CK techniques observed
+
+When profiling a threat actor:
+- Actor name, aliases, motivation
+- Target industries and regions
+- Active TTPs mapped to MITRE ATT&CK, with technique IDs
+- Known malware, tools, recent campaigns
+- Attribution confidence
+
+When posting to the case wall, structure the comment as:
+
+THREAT_INTEL_FINDINGS:
+
+IP REPUTATION: [GTI verdict, ASN, hosting provider, country, any associated
+campaigns]
+
+THREAT ACTOR: [name, aliases, assessed motivation, target industries]
+
+MITRE ATT&CK: [ID: technique name, one per line, at least five]
+
+CAMPAIGN CONTEXT: [relevant campaign detail from GTI]
+
+ATTRIBUTION CONFIDENCE: [High, Moderate or Low, with the reasoning behind it]
+
+Cite GTI as the source. Keep each section to a few lines. An analyst in triage
+is scanning, not reading.
+""",
+    generate_content_config=types.GenerateContentConfig(
+        http_options=types.HttpOptions(
+            retry_options=types.HttpRetryOptions(
+                initial_delay=2,
+                attempts=6,
+            )
+        )
+    ),
+    tools=[
+        McpToolset(
+            connection_params=StdioConnectionParams(
+                server_params=StdioServerParameters(
+                    command="uvx",
+                    args=["--with", "mcp<2", "gti_mcp"],
+                    env={
+                        "VT_APIKEY": os.environ.get("VT_APIKEY", ""),
+                        "PATH": os.environ.get(
+                            "PATH", "/root/.local/bin:/usr/local/bin:/usr/bin:/bin"
+                        ),
+                    },
+                ),
+            ),
+            tool_filter=GTI_TOOLS,
+        ),
+        McpToolset(connection_params=SseConnectionParams(url="http://localhost:8005/sse")),  # SOAR
+    ],
+)
 ```
 
-Add to the **Constraints** section of its instruction:
-
-```
-After completing your analysis, post your findings to the SOAR case wall using
-post_case_comment, starting the comment with THREAT_INTEL_FINDINGS:. Include the
-GTI verdict for the IP, the threat actor with aliases and motivation, at least
-five MITRE ATT&CK technique IDs with names, and your attribution confidence with
-the reasoning behind it.
-```
+> **Two transports in one agent.** GTI runs over stdio, because ADK launches
+> `uvx gti_mcp` as a subprocess and has to be told the command, arguments and
+> environment. SOAR runs over SSE, because that server is already running and
+> only needs a URL. Nothing about the agent changes; only how ADK reaches
+> each tool.
 
 ### identity_investigator
 
