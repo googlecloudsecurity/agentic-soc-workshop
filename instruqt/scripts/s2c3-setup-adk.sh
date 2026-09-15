@@ -69,17 +69,26 @@ fetch "${REPO_RAW}/skills/incident-report-writer/SKILL.md" \
       "${SKILLS_DIR}/incident-report-writer/SKILL.md" || exit 1
 
 # --- start servers ----------------------------------------------------------
+# Deliberately not `curl ... | head | grep -q`: grep exits on first match,
+# curl takes SIGPIPE, and under `set -o pipefail` the pipeline reports
+# failure even when the marker was found.
 serving() {
-  curl -s --max-time 2 "http://localhost:$1/sse" 2>/dev/null | head -1 | grep -q 'event:'
+  local body
+  body=$(curl -s --max-time 2 "http://localhost:$1/sse" 2>/dev/null) || return 1
+  [[ "${body}" == *"event:"* ]]
 }
 
 start_mock() {
   local name="$1" port="$2" script="${MCP_DIR}/$1_mock.py"
   if serving "${port}"; then
-    log "${name} already serving on ${port}"
+    log "${name}: already serving on ${port}"
     return 0
   fi
-  log "starting ${name} on ${port}"
+  if [ ! -s "${script}" ]; then
+    log "${name}: ERROR script missing at ${script}"
+    return 0
+  fi
+  log "${name}: starting on ${port}"
   nohup "${VENV_PY}" "${script}" >>"/var/log/mcp-${name}.log" 2>&1 &
 }
 
@@ -88,20 +97,35 @@ start_mock salesforce 8004
 start_mock soar       8005
 
 # --- readiness --------------------------------------------------------------
+# Only the three ports this script owns. Okta (8001) and CrowdStrike (8002)
+# are started elsewhere; waiting on them here just stalls challenge setup.
 log "waiting for MCP servers"
-for port in 8001 8002 8003 8004 8005; do
+FAILED=0
+for entry in "wiz:8003" "salesforce:8004" "soar:8005"; do
+  name="${entry%%:*}"; port="${entry##*:}"
   ready=0
-  for _ in $(seq 1 30); do
+  for _ in $(seq 1 15); do
     if serving "${port}"; then ready=1; break; fi
     sleep 1
   done
   if [ "${ready}" -eq 1 ]; then
-    log "port ${port}: ready"
+    log "${name} (${port}): ready"
   else
-    log "WARNING: port ${port} not serving"
-    tail -10 /var/log/mcp-*.log 2>/dev/null | sed 's/^/    /' || true
+    log "${name} (${port}): NOT SERVING"
+    tail -15 "/var/log/mcp-${name}.log" 2>/dev/null | sed 's/^/    /' || true
+    FAILED=1
   fi
 done
 
-log "setup complete"
+# Report on the two this script does not own, without blocking on them.
+for entry in "okta:8001" "crowdstrike:8002"; do
+  name="${entry%%:*}"; port="${entry##*:}"
+  if serving "${port}"; then
+    log "${name} (${port}): ready"
+  else
+    log "${name} (${port}): not serving, started outside this script"
+  fi
+done
+
+[ "${FAILED}" -eq 0 ] && log "setup complete" || log "setup complete with errors"
 exit 0
