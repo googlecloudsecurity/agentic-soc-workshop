@@ -48,7 +48,7 @@ That is the playbook you are about to run.
 
 ## Part 1: read the playbook before you run it
 
-**What you're doing:** understanding what the automation will do before you
+**What you're doing.** Understanding what the automation will do before you
 let it touch your case. A playbook that writes to the case record and
 changes its priority deserves a read-through first.
 
@@ -145,7 +145,7 @@ the platform that could answer it.
 
 ## Part 3: read what it concluded
 
-**What you're doing:** checking the model's reasoning rather than accepting
+**What you're doing.** Checking the model's reasoning rather than accepting
 its answer. Same discipline as Challenge 1, where you read TIN's queries
 rather than just its verdict.
 
@@ -187,7 +187,7 @@ Nothing gets logged until someone touches them, and by then the exposure
 has already existed for months.
 
 **Some data is deliberately not ingested.** Full endpoint process telemetry
-is enormous. Most organisations forward detections and selected events, not
+is enormous. Most organizations forward detections and selected events, not
 every process launch on every host, because the ingestion cost is real and
 the value of the long tail is low until an incident makes one branch of it
 interesting.
@@ -206,7 +206,7 @@ useful question, and it is not the only one.
 
 ## Part 4: decide
 
-**What you're doing:** the second human-in-the-loop gate in this workshop.
+**What you're doing.** The second human-in-the-loop gate in this workshop.
 The first, in Challenge 1, decided what went into the record. This one
 decides who owns the case.
 

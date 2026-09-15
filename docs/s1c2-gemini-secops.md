@@ -80,7 +80,7 @@ Gemini will usually go further. Look for it to cover some of:
   browser user agents. A scripted client is a common way to pull many
   records at once.
 - **Downloader and malware patterns.** Scripted Python clients are a
-  recognised tooling pattern in data theft operations.
+  recognized tooling pattern in data theft operations.
 - **Evasion.** Custom scripts bypass client-side controls and avoid
   producing the telemetry a human session would.
 
@@ -126,7 +126,7 @@ Fund_Performance_Internal_YTD.xlsx
 
 ## Part 3: approve the findings onto the case wall
 
-**What you're doing:** getting your discovery onto the case record, where
+**What you're doing.** Getting your discovery onto the case record, where
 the case-level assessment in Challenge 4 and the agents you build in
 Section 2 will read it.
 
@@ -165,9 +165,9 @@ agent, and the Aura endpoint POST.
 
 ---
 
-## The teaching moment
+## Two tools, one case wall
 
-TIN runs structured automated searches optimised for triage speed, and
+TIN runs structured automated searches optimized for triage speed, and
 shows you every one of them. Gemini lets you ask a natural language
 question that crosses a log source boundary the automated search never
 covered.

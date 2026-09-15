@@ -31,7 +31,7 @@ difference between them matters.
 | Starts from | A curated GTI campaign | A hunting objective you set |
 | Method | Indicator matching against your telemetry | Autonomous multi-step YARA-L 2.0 investigation |
 | Output | IOC matches, detection matches, campaign-mapped rules | A dedicated case with an explicit determination and its evidence |
-| Answers | Do this campaign's indicators appear in our data? | Is this behaviour present, whether or not the indicators match? |
+| Answers | Do this campaign's indicators appear in our data? | Is this behavior present, whether or not the indicators match? |
 
 The Emerging Threats Center is a standing answer to "are we affected". The
 Threat Hunt agent is a deep investigation you launch when you want proof
@@ -44,7 +44,7 @@ background on the other one.
 
 ## Part 1: find the campaign
 
-**What you're doing:** starting from curated campaign intelligence rather
+**What you're doing.** Starting from curated campaign intelligence rather
 than from a fired alert.
 
 The Emerging Threats Center correlates GTI campaign intelligence against
@@ -115,13 +115,13 @@ yourself:
 
 ## Part 2: the Threat Hunt agent
 
-**What you're doing:** reading, not clicking. The Threat Hunt agent is not
+**What you're doing.** Reading, not clicking. The Threat Hunt agent is not
 wired into this sandbox, so this part is background on a capability you
 will meet in a real deployment.
 
 It matters here because it answers the question Part 1 raised at a
 different scale. The Emerging Threats Center tells you whether campaign
-indicators match your telemetry. A hunt goes looking for the behaviour
+indicators match your telemetry. A hunt goes looking for the behavior
 even where no indicator matches.
 
 ### What it is
@@ -144,7 +144,7 @@ ask.
 
 Hunting is the most expensive thing a SOC does with its time, because most
 hunts find nothing. That is not failure. "We looked across our historical
-telemetry for this actor's behaviour and found no evidence" is an answer a
+telemetry for this actor's behavior and found no evidence" is an answer a
 CISO can act on, and it is worth having. But paying a senior analyst to
 produce it over and over is why hunting is the first thing to get dropped
 when the queue is full.

@@ -52,7 +52,7 @@ server and work with the agent from there.
 The agent closes the loop between intelligence and detection.
 
 **Threat intelligence extraction.** It reads CTI reports and emerging threat
-advisories and extracts granular behavioural procedures and tactics from
+advisories and extracts granular behavioral procedures and tactics from
 them, turning prose into structured **Threat Detection Opportunities**
 (TDOs). That is the step that normally takes a detection engineer an
 afternoon of reading.
@@ -65,7 +65,7 @@ same language your curated rules are written in.
 embedded simulation harness generates synthetic, schema-valid UDM events
 reflecting the exact adversary procedures, and pushes them through your
 live ingestion pipeline. The rule is validated end to end, from
-normalisation through to whether it actually fires, in a production-safe
+normalization through to whether it actually fires, in a production-safe
 way.
 
 **Coverage evaluation.** The result is a full-funnel answer: not "does this

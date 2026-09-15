@@ -18,7 +18,7 @@ Google SecOps SIEM. When an alert fires, it automatically:
 - Correlates findings into a structured investigation
 - Shows every query it ran, so you can audit how it reached its verdict
 
-In under two minutes it pulls in tens of events across multiple log
+In under two minutes it pulls in around thirty events across multiple log
 sources, retrieves live GTI attribution on the attacker IP, and prepares a
 complete investigation summary with every query shown in full. A human
 analyst doing this by hand takes 20 to 40 minutes.
@@ -40,8 +40,8 @@ Case [CASE ID] - [PRIORITY] Priority
 ```
 
 For example: **Case 1053 - High Priority**. Something set that name
-automatically the moment the alert arrived. You will find out what in
-Challenge 4.
+automatically the moment the alert arrived. You will find out what did that
+in Challenge 4.
 
 **Task 1.3** — Click the case to open it.
 
@@ -88,7 +88,7 @@ Things worth stopping on:
   returned, then look at the query.
 
 > **Read the queries, not just the findings.** The user agent search is the
-> one to sit with. The emulator string is the centrepiece of this alert, and
+> one to sit with. The emulator string is the centerpiece of this alert, and
 > yet that search came back empty, because it was scoped to
 > `metadata.event_type = "USER_LOGIN"` and the MFA factor activation is not
 > a login event.
@@ -134,7 +134,7 @@ This is the human-in-the-loop moment, and it is a real question. Before you
 answer it, weigh what you have read:
 
 - What verdict and confidence did TIN return?
-- Does the Gemini Summary panel characterise the incident the same way?
+- Does the Gemini Summary panel characterize the incident the same way?
 - Which of the two had more evidence in front of it?
 - From the evidence you have read, the failed login sequence, the
   successful authentication, the immediate enrollment of an MFA factor from
@@ -143,8 +143,7 @@ answer it, weigh what you have read:
 > **Disagreeing is a valid answer.** The prompt is not there for decoration.
 > An analyst who rubber-stamps an automated verdict adds nothing to the
 > chain. An analyst who reads the evidence, forms their own view, and
-> records where it differs is doing the job. Your feedback is also how the
-> product learns what your environment actually looks like.
+> records where it differs is doing the job.
 
 **Task 3.2** — Close the investigation panel and return to the case. Find
 **Pending Actions** and click **Respond** on **Approve Triage Agent

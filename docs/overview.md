@@ -10,7 +10,7 @@ A detection rule fires at Cymbal Investments.
 
 An account belonging to a senior portfolio manager authenticates
 successfully from Warsaw, Poland, a city it has never logged in from.
-Fifty three seconds later, that same account enrolls a new multi-factor
+Fifty-three seconds later, that same account enrolls a new multi-factor
 authentication device. The device is an Android emulator.
 
 Fifteen minutes after that, seven confidential documents leave the
@@ -40,7 +40,7 @@ logs together.
 ## The adversary
 
 The tradecraft in front of you matches a ShinyHunters-branded cluster
-tracked as **UNC6661**. Their pattern is consistent enough to recognise
+tracked as **UNC6661**. Their pattern is consistent enough to recognize
 from the first three events.
 
 **They call you.** Not an email with a link. A phone call, from someone who
