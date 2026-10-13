@@ -122,9 +122,9 @@ Scope:           isolated to s.hudson, no other accounts targeted by this IP
 ## Part 3: decide, then post to the case wall
 
 > **This step has consequences.** If you decline, or let the action time out
-> after 10 minutes, TIN's findings never reach the case wall. In Section 2
-> your agents will read the case wall and find nothing from TIN, and the
-> Incident Commander will have no triage context to cite.
+> after 2 hours, TIN's findings never reach the case wall. The playbook posts
+> "Analyst rejected or approval timed out. Manual review required." instead,
+> and anyone reading the case later has no triage context to build on.
 >
 > This is intentional. Every decision in the investigation chain has
 > downstream consequences.
