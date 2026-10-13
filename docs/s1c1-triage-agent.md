@@ -18,7 +18,7 @@ Google SecOps SIEM. When an alert fires, it automatically:
 - Correlates findings into a structured investigation
 - Shows every query it ran, so you can audit how it reached its verdict
 
-In under two minutes it pulls in around thirty events across multiple log
+In under two minutes it runs a series of SIEM searches across multiple log
 sources, retrieves live GTI attribution on the attacker IP, and prepares a
 complete investigation summary with every query shown in full. A human
 analyst doing this by hand takes 20 to 40 minutes.
@@ -55,7 +55,7 @@ in Challenge 4.
 >
 > | | Case Summary | TIN Investigation |
 > |---|---|---|
-> | Evidence base | The alert events | Its own SIEM searches, ~31 events |
+> | Evidence base | The alert events | Its own SIEM searches, ~24 events |
 > | Threat intel | References a verdict | Ran a live GTI query |
 > | Scope | This alert | Checked whether other accounts were hit |
 
@@ -81,17 +81,19 @@ Things worth stopping on:
 - **The prior alert for this identity.** TIN found one, closed by a human
   with a root cause that is not what you would expect. Read how TIN handled
   that.
-- **The IP search**, `principal.ip = "149.50.97.144"` across a six-day
-  window, returning ~31 events. This is the search that concluded the
-  activity was isolated to one account.
-- **The user agent search** for `Genymobile/Phone`. Look at what it
-  returned, then look at the query.
+- **The session and MFA search.** Read its finding closely. TIN describes
+  an "unauthorized MFA activation" and says "the attacker successfully
+  established a session", then returns a False Positive verdict anyway.
+- **The IP search**, `principal.ip = "149.50.97.144"` across a 24-hour
+  window, returning 14 events. This is the search that concluded the
+  activity was isolated to one account. Look at what it returned, then look
+  at the query.
 
-> **Read the queries, not just the findings.** The user agent search is the
-> one to sit with. The emulator string is the centerpiece of this alert, and
-> yet that search came back empty, because it was scoped to
-> `metadata.event_type = "USER_LOGIN"` and the MFA factor activation is not
-> a login event.
+> **Read the queries, not just the findings.** The IP search is the one to
+> sit with. It is the basis for the scope conclusion, and yet it was scoped
+> to `metadata.event_type = "USER_LOGIN"`. The MFA factor activation is not
+> a login event, and neither is anything the attacker did inside the
+> applications they reached.
 >
 > Nothing is wrong with the query. It is well-formed and the assumption
 > behind it is reasonable. But scope determines findings, and the only way
@@ -110,9 +112,9 @@ Pattern:         failed logins, successful auth, immediate MFA enrollment
 Scope:           isolated to s.hudson, no other accounts targeted by this IP
 ```
 
-> **What is missing.** TIN pulled ~31 events and ran a live GTI query
+> **What is missing.** TIN ran its searches and a live GTI query
 > automatically, in under two minutes. But there is no Salesforce data
-> exfiltration in any of it. Look again at the IP search that found those 31
+> exfiltration in any of it. Look again at the IP search that found those 14
 > events and ask what it would have matched. That is Challenge 2.
 
 ---

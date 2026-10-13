@@ -84,9 +84,9 @@ both are correct. Plenty of rules that look right never fire, because the
 field they match on is not populated by the log source that would carry the
 event.
 
-You saw a version of that in Challenge 1. The Triage agent searched for the
-emulator user agent and got nothing back, because the search was scoped to
-`USER_LOGIN` and an MFA activation is not a login. The query was
+You saw a version of that in Challenge 1. The Triage agent concluded the
+attack was isolated to one account from an IP search scoped to
+`USER_LOGIN`, and an MFA activation is not a login. The query was
 well-formed and the assumption behind it was reasonable. It still did not
 match.
 
