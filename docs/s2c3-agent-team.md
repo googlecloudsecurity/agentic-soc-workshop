@@ -41,7 +41,7 @@ Five agents. One you already have.
 | **Identity & Endpoint Investigator** | Questions 1 and 2. Session state, MFA factors, endpoint detections, host containment. | Okta, CrowdStrike | read, write |
 | **Cloud & SaaS Investigator** | Questions 3 and 4. CRM activity, connected apps, record changes, federated cloud reach. | Salesforce, Wiz | read, write |
 | **CTI Analyst** | The actor. Built in Challenge 2, joins the team here. | GTI | read, write |
-| **IR Analyst** | Reads the whole wall and writes the incident report. Investigates nothing. | none | read, write |
+| **IR Analyst** | Reads the whole wall and writes the incident report. Investigates nothing. | SecOps | read, write |
 
 > **Why two investigators rather than one.** Identity and endpoint are one
 > thread: a session was taken, and something may or may not have run on the
