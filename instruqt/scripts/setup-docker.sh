@@ -82,11 +82,6 @@ echo "[SETUP] Username: ${USERNAME}"
 # ---- Write shared library ----
 # Constants and credentials (expanded), then functions (literal).
 cat > "${WORKDIR}/env.sh" << ENVEOF
-OKTA_PROVISION_URL="https://chronicle.workflows.okta.com/api/flo/d17f540697d1c51b3d2ee59be2b64668/invoke"
-OKTA_PROVISION_TOKEN="\${okta_provision_token:-feda362ae7d79308e29d9a7ca88d6c0b3df11b468095113a85421e122cfe2f90}"
-OKTA_BASE_URL="https://chronicle.okta.com"
-SECOPS_URL="https://agentic.backstory.chronicle.security"
-EMAIL_DOMAIN="chronicle.team"
 WORKDIR="${WORKDIR}"
 USERNAME="${USERNAME}"
 PASSWORD="${PASSWORD}"
