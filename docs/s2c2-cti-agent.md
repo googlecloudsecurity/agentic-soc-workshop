@@ -331,11 +331,14 @@ adk web --host 0.0.0.0 --port 8000
 
 ## Step 5: grade your agent
 
-Open the **Grader** tab and click **Grade Challenge 2**.
+Open the **Grader** tab and click **Grade Challenge 2**. As in Challenge 1,
+it reviews your `agent.py` rather than running it: the MCP configuration,
+the description, and what your instruction tells the agent to do with GTI.
+It takes around 30 seconds.
 
-As in Challenge 1, the score is feedback rather than a gate. Read the
-per-dimension notes, tighten the part of your instruction they point at,
-restart the agent, and grade again.
+The score is feedback rather than a gate. Read the per-dimension notes,
+tighten the part of your instruction they point at, save the file, and grade
+again.
 
 ---
 

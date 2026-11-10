@@ -238,17 +238,19 @@ noted in Step 3, then open the trace. This time there is a tool call to
 
 ## Step 6: grade your agent
 
-Open the **Grader** tab and click **Grade Challenge 1**. The grader runs
-your agent against a set of test prompts and scores it across five
-dimensions: instruction quality, tool configuration, MITRE response,
-analytical depth, and live intelligence.
+Open the **Grader** tab and click **Grade Challenge 1**. The grader reviews
+your `agent.py`: it checks that the agent loads, then scores your
+configuration and instruction across five dimensions: instruction structure,
+tool configuration, MITRE ATT&CK coverage, live intelligence and grounding,
+and output format.
 
-You get a score out of 100 with specific feedback on each dimension. The
-grader takes around 30 seconds, because it runs your agent live rather than
-reading your file.
+You get a score out of 100 with specific feedback on each dimension. Grading
+takes around 30 seconds. The grader reads your file rather than running your
+agent, so it scores what your instruction tells the model to do. The ADK Web
+trace is still where you confirm the agent actually does it.
 
 > The score is feedback, not a gate. Read the per-dimension notes, refine
-> your instruction or tools, restart the agent, and grade again. Most people
+> your instruction or tools, save the file, and grade again. Most people
 > gain the most on their second attempt.
 
 ---

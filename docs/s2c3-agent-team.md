@@ -558,9 +558,14 @@ old session replays stale tool state.
 
 ## Step 13: grade your team
 
-Open the **Grader** tab and click **Grade Challenge 3**. It scores every
-agent in the team, including the `cti_agent` you built in Challenge 2, so a
-weak description written earlier shows up here.
+Open the **Grader** tab and click **Grade Challenge 3**. It reviews all five
+agent files, including the `cti_agent` you built in Challenge 2, so a weak
+description written earlier shows up here. It checks that the team loads and
+is wired correctly, then scores the descriptions and instructions. It takes
+around 30 seconds.
+
+The grader does not run the investigation, so it cannot see the case wall.
+Confirming that all four comments actually landed is your job, in Step 10.
 
 ---
 
